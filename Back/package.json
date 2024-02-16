@@ -1,0 +1,27 @@
+{
+  "name": "stumblesafe-back",
+  "version": "1.0.0",
+  "description": "Back-end for the StumbleSafe Project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MargameOff/StumbleSafe.git"
+  },
+  "keywords": [
+    "react-native",
+    "NodeJS",
+    "MongoDB"
+  ],
+  "author": "Chloé BUTTIGIEG, Marius DELEUIL, Mathis MORAIS, Enora SICRE",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MargameOff/StumbleSafe/issues"
+  },
+  "homepage": "https://github.com/MargameOff/StumbleSafe#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
