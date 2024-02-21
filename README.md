@@ -3,6 +3,13 @@ INSA Project for the 3rd year
 
 ## Back
 
+### Installation des dépendances
+```npm i```
+
 ## Front
-# Start in Dev
+
+### Installation des dépendances
+```npm i```
+
+### Start in Dev
 ```npx expo start```
