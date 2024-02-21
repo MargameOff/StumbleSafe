@@ -18,6 +18,7 @@ You can modify the .env file to change the database configuration.
 
 ### Installation des dépendances
 ```npm i```
+```sudo npm i -g nodemon```
 
 ## Front
 

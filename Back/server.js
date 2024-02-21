@@ -6,7 +6,7 @@ const APP = express()
 const PORT = 8080;
 
 APP.listen(PORT, () => {
-    console.log(`Example app listening on port ${PORT}`)
+    console.log(`Stumble app listening on port ${PORT}`)
 })
 
 defaultroute(APP);
