@@ -20,6 +20,9 @@ You can modify the .env file to change the database configuration.
 ```npm i```
 ```sudo npm i -g nodemon```
 
+### Start in Dev
+```npm run dev```
+
 ## Front
 
 ### Installation des dépendances
