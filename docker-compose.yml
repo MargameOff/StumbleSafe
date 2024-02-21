@@ -15,7 +15,7 @@ services:
   api:
     depends_on:
       - mongodb
-    build: ./Front
+    build: ./Back
     restart: unless-stopped
     env_file: ./.env
     ports:
