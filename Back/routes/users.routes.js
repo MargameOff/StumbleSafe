@@ -1,11 +1,10 @@
+import express from 'express';
 import {signup} from '../controllers/users/signup.controllers.js';
 import bodyParser from 'body-parser';
-export default function load(app) {
-    let jsonParser = bodyParser.json()
-    app.post('/users/signup', jsonParser, signup);
 
-    
+const router = express.Router();
+let jsonParser = bodyParser.json()
 
+router.post('/signup', jsonParser, signup);
 
-}
-
+export default router;

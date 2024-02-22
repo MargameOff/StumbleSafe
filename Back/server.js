@@ -1,5 +1,5 @@
 import express from 'express';
-import userRoute from './routes/users.routes.js';
+import userRoutes from './routes/users.routes.js';
 
 const APP = express()
 
@@ -8,6 +8,9 @@ const PORT = 8080;
 APP.listen(PORT, () => {
     console.log(`Stumble app listening on port ${PORT}`)
 })
+
+//Routes
+APP.use('/api/users', userRoutes);
 
 APP.get('/status', (req, res) => {
     res.data = {
