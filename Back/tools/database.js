@@ -10,10 +10,6 @@ if (!process.env.MONGODB_USER || !process.env.MONGODB_PASSWORD || !process.env.M
 }
 
 const uri = "mongodb://" + process.env.MONGODB_USER + ":" + process.env.MONGODB_PASSWORD + "@" + process.env.MONGODB_HOST + ":" + process.env.MONGODB_LOCAL_PORT + "/" + process.env.MONGODB_DATABASE + "?retryWrites=true&w=majority";
-const options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-};
 const connectDB = async () => {
     try {
         await mongoose.connect(uri, {
