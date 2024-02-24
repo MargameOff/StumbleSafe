@@ -1,7 +1,14 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import userRoutes from './routes/users.routes.js';
 import dotenv from 'dotenv';
+import userRoutes from './routes/users.routes.js';
+import groupRoutes from './routes/groups.routes.js';
+import consentRoutes from './routes/consents.routes.js';
+import notificationRoutes from './routes/notifications.routes.js';
+import tripRoutes from './routes/trips.routes.js';
+import positionRoutes from './routes/positions.routes.js';
+import alertRoutes from './routes/alerts.routes.js';
+import logRoutes from './routes/logs.routes.js';
 
 //Constants
 const APP = express();
@@ -31,10 +38,10 @@ APP.use('/api/users', userRoutes);
 APP.use('/api/groups', groupRoutes);
 APP.use('/api/consents', consentRoutes);
 APP.use('/api/notifications', notificationRoutes);
-APP.use('/api/trip', tripRoutes);
-APP.use('/api/position', positionRoutes);
-APP.use('/api/alert', alertRoutes);
-APP.use('/api/log', logRoutes);
+APP.use('/api/trips', tripRoutes);
+APP.use('/api/positions', positionRoutes);
+APP.use('/api/alerts', alertRoutes);
+APP.use('/api/logs', logRoutes);
 
 APP.get('/status', (req, res) => {
     res.data = {
