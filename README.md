@@ -1,6 +1,14 @@
 # StumbleSafe
 INSA Project for the 3rd year
 
+
+## Domain
+
+### Modele de donées
+
+<img width="483" alt="image" src="https://github.com/MargameOff/StumbleSafe/assets/135878234/bb5ab83a-0d6d-4bf3-9cdd-b016295ed464">
+
+
 ## DataBase
 ### Commands
 You can start the project for the first time with the following command:
