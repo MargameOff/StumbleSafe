@@ -6,11 +6,9 @@ import dotenv from 'dotenv';
 
 const APP = express();
 const PORT = 8080;
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
-const envPath = path.resolve(__dirname, '../.env');
 
 //Set up the .env file
-dotenv.config({ path: envPath });
+dotenv.config({ path: "../.env" });
 
 mongoose.connect("mongodb://" + process.env.MONGODB_USER + ":" + process.env.MONGODB_PASSWORD + "@" + process.env.MONGODB_HOST + ":" + process.env.MONGODB_LOCAL_PORT + "/" + process.env.MONGODB_DATABASE + "?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true, authSource: 'admin' })
     .then(() => {
