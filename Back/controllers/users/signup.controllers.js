@@ -1,6 +1,7 @@
 import UserModel from '../../models/user.models.js';
 import {checkIfIsValidMail} from '../../tools/format.js';
 import {connectDB, disconnectDB} from '../../tools/database.js';
+import bcrypt from "bcrypt";
 
 const signup = async (req, res) => {
     // Connexion à la base de données
@@ -32,9 +33,11 @@ const signup = async (req, res) => {
         if(!nom || !email || !password || !nom_affiche){
             return res.status(400).json({ message: 'Les informations de l\' utilisateur sont manquantes' });
         }
+        // Hasher le mot de passe
+        const hash = await bcrypt.hash(password, 10);
 
         // Créer un nouvel utilisateur en utilisant le modèle Mongoose
-        const newUser = new UserModel({ nom, nom_affiche, email, password });
+        const newUser = new UserModel({ nom, nom_affiche, email, password:hash });
         
         // Enregistrer l'utilisateur dans la base de données
         const user = await newUser.save();
