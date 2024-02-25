@@ -3,18 +3,13 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { log } from 'console';
 
-
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
-
-const envPath = path.resolve(__dirname, '../../.env');
-dotenv.config({ path: envPath});
-
+dotenv.config({ path: '../.env'});
+if (!process.env.MONGODB_USER || !process.env.MONGODB_PASSWORD || !process.env.MONGODB_HOST || !process.env.MONGODB_LOCAL_PORT || !process.env.MONGODB_DATABASE) {
+    log('Le fichier .env est mal configuré ou manquant');
+    process.exit(1);
+}
 
 const uri = "mongodb://" + process.env.MONGODB_USER + ":" + process.env.MONGODB_PASSWORD + "@" + process.env.MONGODB_HOST + ":" + process.env.MONGODB_LOCAL_PORT + "/" + process.env.MONGODB_DATABASE + "?retryWrites=true&w=majority";
-const options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-};
 const connectDB = async () => {
     try {
         await mongoose.connect(uri, {
