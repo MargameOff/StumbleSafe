@@ -68,16 +68,17 @@ const login = async (req, res) => {
         console.log(req.body.userInfos);
         // Vérifier si l'utilisateur existe déjà dans la base de données
         const { email, password } = req.body.userInfos; // Assurez-vous que req.body.userInfos contient les données correctes
-    
         const user = await UserModel.findOne({ email });
-        
-        if (user && bcrypt.compare(password, user.password)) {
-            const token = await createJwt(user._id)
-            return res.status(400).json({ message: 'Connexion réussie', token: token });
-        } else {
-            return res.status(400).json({ message: 'Les identifiants ne sont pas valides' });
+
+        if(user) {
+            const isValidPassword = await bcrypt.compare(password, user.password);
+            if (isValidPassword) {
+                const token = await createJwt(user._id)
+                return res.status(400).json({ message: 'Connexion réussie', token: token });
+            }
         }
 
+        return res.status(400).json({ message: 'Les identifiants ne sont pas valides' });
     } catch (error) {
         // Gérer les erreurs
         res.status(500).json({ message: 'Erreur lors de l\'authentification de l\'utilisateur', error: error.message });
