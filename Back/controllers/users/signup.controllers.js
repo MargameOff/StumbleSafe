@@ -1,12 +1,9 @@
 import UserModel from '../../models/user.models.js';
 import Jwt from 'jsonwebtoken';
 import {checkIfIsValidMail} from '../../tools/format.js';
-import {connectDB, disconnectDB} from '../../tools/database.js';
 import bcrypt from "bcrypt";
 
 const signup = async (req, res) => {
-    // Connexion à la base de données
-  //  await connectDB();
     try {
         // Récupérer les données de l'utilisateur à partir du corps de la requête
         console.log(req.body.userInfos);
@@ -47,6 +44,7 @@ const signup = async (req, res) => {
         // On regroupe les infos a retourner à l'utilisateur
         const response = {
             "nom": user.nom,
+            "nom_affiche": user.nom_affiche,
             "email": user.email,
             "phoneNumbers": user.phoneNumbers,
             "token": token
