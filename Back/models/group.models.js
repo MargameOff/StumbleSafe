@@ -8,7 +8,6 @@ const groupSchema = new mongoose.Schema({
     code: {
         type: String,
         required: true,
-        unique: true,
         minlength: 6,
         maxlength: 6
     },
