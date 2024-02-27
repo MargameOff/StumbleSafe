@@ -89,7 +89,7 @@ const login = async (req, res) => {
  * @returns Un token d'authentification pour une durée limitée contenant l'ID de l'utilisateur en DB
  */
 const createJwt = async (id) => {
-    return Jwt.sign({'id': id}, process.env.JWT_SECRET, { expiresIn: '1h' })
+    return Jwt.sign({'id': id}, process.env.JWT_SECRET, { expiresIn: '1d' })
 }
 
 const checkIfUserEmailExists = async(email) => {

@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 const groupSchema = new mongoose.Schema({
     nom: {
         type: String,
@@ -15,8 +17,14 @@ const groupSchema = new mongoose.Schema({
         default: true
     },
     membres: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        membreId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        proprietaire: {
+            type: Boolean,
+            default: false 
+        }
     }]
 });
 
