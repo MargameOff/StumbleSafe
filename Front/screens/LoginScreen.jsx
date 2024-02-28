@@ -24,7 +24,7 @@ export function LoginScreen() {
         <IconInput varName={"nomUtilisateur"} label={"Nom d'utilisatreur"} isPassword={false}/>
         <View style={{ height: 20 }} />
         <IconInput varName={"motDePasse"} label={"Mot de passe"} isPassword={true}/>
-        <View style={{ height: 40 }} />
+        <View style={{ height: 30 }} />
         <GreenButton label={"Connexion"} link={"/login"} />
         <View style={{ height: 20 }} />
         <TransparentButton label={"Mot de passe oublié"} link={"/forgetPass"} />
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "center",
     height: "100%",
     width: "100%",
   },

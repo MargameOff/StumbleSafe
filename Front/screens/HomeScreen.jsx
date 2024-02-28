@@ -44,18 +44,18 @@ export function HomeScreen() {
       fontFamily: "Montserrat_700Bold",
       fontSize: 35,
       color: "white",
-      marginBottom: vh(10),
     },
     container: {
       flex: 1,
       alignItems: "center",
+      justifyContent: "center",
       height: "100%",
       width: "100%",
     },
     image: {
       width: vw(100),
       height: vh(55),
-      marginTop: 20,
+      marginTop: -30,
       marginBottom: -50,
     },
     buttonText: {
