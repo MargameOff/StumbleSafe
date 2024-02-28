@@ -2,7 +2,7 @@ import express from 'express';
 import {login, signup} from '../controllers/users/signup.controllers.js';
 import bodyParser from 'body-parser';
 import checkIfUserIsConnected from '../controllers/middlewares/auth.middleware.js';
-import extractUserIdFromToken from "../controllers/middlewares/jwt_id.middleware.js";
+
 import {
     getUserProfile,
     updateDisplayName,
@@ -14,9 +14,9 @@ let jsonParser = bodyParser.json()
 
 router.post('/signup', jsonParser, signup);
 router.post('/login', jsonParser, login)
-router.get('/profile', extractUserIdFromToken, getUserProfile);
-router.patch('/update/name', extractUserIdFromToken, updateDisplayName)
-router.patch('/update/password', extractUserIdFromToken, updatePassword)
+router.get('/profile', checkIfUserIsConnected, getUserProfile);
+router.patch('/update/name', checkIfUserIsConnected, updateDisplayName)
+router.patch('/update/password', checkIfUserIsConnected, updatePassword)
 
 
 // route pour tester le login
