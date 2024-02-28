@@ -9,6 +9,7 @@ const checkIfUserIsConnected = async(req, res, next) => {
     try {
         var decoded = Jwt.verify(token, process.env.JWT_SECRET);
         if(decoded != null) {
+            req.user = decoded;
             next()
             return
         }
