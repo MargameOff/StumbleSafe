@@ -9,6 +9,7 @@ import tripRoutes from './routes/trips.routes.js';
 import positionRoutes from './routes/positions.routes.js';
 import alertRoutes from './routes/alerts.routes.js';
 import logRoutes from './routes/logs.routes.js';
+import cors from 'cors';
 
 //Constants
 const APP = express();
@@ -32,7 +33,7 @@ mongoose.connect("mongodb://" + process.env.MONGODB_USER + ":" + process.env.MON
 
 //Middleware
 APP.use(express.json());
-
+APP.use(cors()); 
 
 //Routes
 APP.use('/api/users', userRoutes);
