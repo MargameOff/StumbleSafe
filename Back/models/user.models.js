@@ -20,11 +20,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    phoneNumbers: {
-        type: [String],
-        required: false
-    },
-    // Autres champs utilisateur ici
 });
 
 const UserModel = mongoose.model('User', userSchema);

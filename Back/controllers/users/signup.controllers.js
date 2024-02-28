@@ -46,7 +46,6 @@ const signup = async (req, res) => {
             "nom": user.nom,
             "nom_affiche": user.nom_affiche,
             "email": user.email,
-            "phoneNumbers": user.phoneNumbers,
             "token": token
         }
         // Répondre avec l'utilisateur créé
