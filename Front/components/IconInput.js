@@ -4,15 +4,7 @@ import { StyleSheet, TextInput, Text, TouchableWithoutFeedback, View } from "rea
 import { MaterialIcons } from '@expo/vector-icons';
 
 
-export default function IconInput({ varName, isPassword = false, label}) {
-  const [inputValues, setInputValues] = useState({});
-  const handleInputChange = (_varName, text) => {
-    setInputValues(prevValues => ({
-      ...prevValues,
-      [_varName]: text
-    }));
-  };
-
+export default function IconInput({ value, defaultValue='', onValueUpdated, isPassword = false, label}) {
   return (
     <View style={styles.container}>
       <MaterialIcons name={isPassword ? "lock" : "person"} size={24} color="#ababab" />
@@ -20,8 +12,8 @@ export default function IconInput({ varName, isPassword = false, label}) {
         style={styles.input}
         placeholder={label}
         placeholderTextColor="#ababab"
-        value={inputValues[varName] || ''}
-        onChangeText={text => handleInputChange(varName, text)}
+        value={value != "" ? value : defaultValue}
+        onChangeText={text => onValueUpdated(text)}
         secureTextEntry = {isPassword}
       />
     </View>

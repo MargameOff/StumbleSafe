@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
 import { Image } from "expo-image";
 import { Button } from "@rneui/themed";
@@ -9,7 +9,52 @@ import { Input } from "@rneui/themed";
 import GreenButton from "../components/GreenButton";
 import TransparentButton from "../components/TransparentButton";
 import IconInput from "../components/IconInput";
+import { JWT_CACHE_FILE, getJwtToken } from "../Utils";
+import * as FileSystem from 'expo-file-system';
+
 export function LoginScreen() {
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  // debug pour montrer comment s'en servir
+  useEffect(() => {
+    getJwtToken((val) => {
+      console.log("Token already exists ? => "+val)
+    })
+  }, [])
+
+  async function loginClk(event) {
+    
+    console.log("click username > "+username)
+    console.log("click password > "+password)
+
+    fetch("http://192.168.1.24:8080/api/users/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        "userInfos": {
+            "email": username,
+            "password": password
+        }
+    }),
+    }).then((res) => {
+      return res.json();
+    })
+    .then((data) => {
+      if(data.token == null) {
+        setErrorMsg(data.message)
+      } else {
+        FileSystem.writeAsStringAsync(JWT_CACHE_FILE, data.token, {encoding: 'utf8'})
+      }
+    }).catch((err) => {
+      setErrorMsg(err.message)
+    });
+  }
+
   return (
     <View style={styles.container}>
       <LinearGradient colors={["#46294F", "#120721"]} style={styles.container}>
@@ -20,12 +65,14 @@ export function LoginScreen() {
         />
         <View style={{ height: 30 }} />
         <Text style={styles.title}>Se Connecter</Text>
-        <View style={{ height: 30 }} />
-        <IconInput varName={"nomUtilisateur"} label={"Nom d'utilisatreur"} isPassword={false}/>
+        <View style={{ height: 15 }} />
+        <Text style={{...styles.buttonText, ...styles.errorText}}>{errorMsg}</Text>
+        <View style={{ height: 15 }} />
+        <IconInput value={username} onValueUpdated={(text) => setUsername(text)} label={"Nom d'utilisateur"} isPassword={false}/>
         <View style={{ height: 20 }} />
-        <IconInput varName={"motDePasse"} label={"Mot de passe"} isPassword={true}/>
+        <IconInput value={password} onValueUpdated={(text) => setPassword(text)} label={"Mot de passe"} isPassword={true}/>
         <View style={{ height: 40 }} />
-        <GreenButton label={"Connexion"} link={"/login"} />
+        <GreenButton label={"Connexion"} onPress={loginClk} link={"/login"} />
         <View style={{ height: 20 }} />
         <TransparentButton label={"Mot de passe oublié"} link={"/forgetPass"} />
       </LinearGradient>
@@ -63,4 +110,7 @@ const styles = StyleSheet.create({
   loginTitle: {
     color: "#ababab",
   },
+  errorText: {
+    color: "#E35050"
+  }
 });
