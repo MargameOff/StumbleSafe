@@ -16,9 +16,11 @@ const tripSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    groupe: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Group',
+    groupes: {
+        type: [{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Group'
+        }],
         required: true
     }
 });
