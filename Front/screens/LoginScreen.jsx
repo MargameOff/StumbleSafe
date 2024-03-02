@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
 import { Image } from "expo-image";
@@ -49,6 +49,7 @@ export function LoginScreen() {
         setErrorMsg(data.message)
       } else {
         FileSystem.writeAsStringAsync(JWT_CACHE_FILE, data.token, {encoding: 'utf8'})
+        router.replace('/dashboard');
       }
     }).catch((err) => {
       setErrorMsg(err.message)

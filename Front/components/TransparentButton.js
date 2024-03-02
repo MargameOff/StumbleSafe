@@ -3,12 +3,13 @@ import { Button } from "@rneui/themed";
 import { LinearGradient } from "expo-linear-gradient";
 import { TouchableWithoutFeedback } from "react-native";
 
-export default function TransparentButton({ label, link }) {
+export default function TransparentButton({ label, link, onPress }) {
   return (
     <Link href={link} asChild>
           <Button
             TouchableComponent={TouchableWithoutFeedback}
             title={label}
+            onPress={onPress}
             buttonStyle={{
               borderRadius: 100,
               backgroundColor: "transparent",
