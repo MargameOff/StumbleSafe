@@ -22,6 +22,26 @@ const tripSchema = new mongoose.Schema({
                 ref: 'Group'
         }],
         required: true
+    },
+    depart: {
+        type: {
+            latitude: { type: Number, required: true},
+            longitude: { type: Number, required: true}
+        }
+    },
+    arrivee: {
+        type: {
+            latitude: { type: Number, required: true},
+            longitude: { type: Number, required: true}
+        }
+    },
+    date_depart:{
+        type: Date,
+        required: true
+    },
+    date_arrivee_estimee: {
+        type: Date,
+        required: true
     }
 });
 
