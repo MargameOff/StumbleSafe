@@ -152,7 +152,6 @@ const create = async (req, res) => {
  *     "date_arrivee_estimee": Date,
  *  }
  */
-
 const getTripInfo = async (req, res) => {
     try {
         // L'ID de l'utilisateur est extrait à partir du token JWT
@@ -304,6 +303,177 @@ const updateTrip = async (req, res) => {
     }
 }
 
+/**
+ * Annulation du trajet correspondant à l'id 'trip_id'
+ * L'utilisateur doit fournir un mot de passe correct pour annuler le trajet
+ * Fait passer le status du trajet de 'en cours' a 'annulé'
+ *
+ *  Request Body :
+ *  {
+ *      trip_id: ObjectID[]
+ *      password: String
+ *  }
+ *
+ *  Response Body :
+ *  {
+ *     "_id": ObjectID[],
+ *     "nom": String,
+ *     "statut": String,
+ *     "utilisateur": ObjectID[],
+ *     "groupes": [
+ *         ObjectID[]
+ *     ],
+ *     "depart": {
+ *         "latitude": Number,
+ *         "longitude": Number,
+ *         "_id": ObjectID[]
+ *     },
+ *     "arrivee": {
+ *         "latitude": Number,
+ *         "longitude": Number,
+ *         "_id": ObjectID[]
+ *     },
+ *     "date_depart": Date,
+ *     "date_arrivee_estimee": Date,
+ *  }
+ */
+const cancelTrip = async (req, res) => {
+    try {
+        // L'ID de l'utilisateur est extrait à partir du token JWT
+        const userId = req.user.id
+        const user = await UserModel.findById(userId);
+
+        const { trip_id, password } = req.body;
+
+        // On récupère le trajet correspondant
+        const trip = await TripModel.findById(trip_id)
+
+        // Cas où le trajet n'est pas trouvé
+        if (!trip)
+        {
+            return res.status(404).json({message: "Trajet non trouvé"});
+        }
+
+        // On vérifie que l'utilisateur qui souhaite annuler le trajet est bien l'utilisateur concerné
+        if (trip.utilisateur.toString() !== userId)
+        {
+            return res.status(403).json({message : "Seul l'utilisateur concerné par le trajet peut l'annuler"})
+        }
+        else
+        {
+            console.log("Trajet trouvé")
+
+            // On vérifie que le trajet est bien "en cours" pour pouvoir l'annuler
+            if (trip.statut !== 'en cours')
+            {
+                return res.status(403).json({message: "Seul un trajet 'en cours' peut être annulé"});
+            }
+
+            // On peut annuler trajet seulement si on fournit notre mot de passe et qu'il est correct
+            const isValidPassword = await bcrypt.compare(password, user.password);
+            if (!isValidPassword) {
+                return res.status(400).json({message: "Mot de passe incorrect"})
+            }
+
+            // Annulation du trajet (si mot de passe correct)
+            trip.statut = 'annulé'
+
+            // Enregistrer les modifications
+            await trip.save();
+            res.status(200).json(trip)
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de l\'annulation du trajet', error:error.message})
+    }
+}
+
+/**
+ * Terminer le trajet correspondant à l'id 'trip_id'
+ * L'utilisateur doit fournir un mot de passe correct pour terminer le trajet
+ * Fait passer le status du trajet de 'en cours' a 'terminé'
+ * Un trajet 'terminé' est un trajet qui s'est effectué sans problème, l'utilisateur est bien arrivé au lieu d'arrivée prévu
+ *
+ *  Request Body :
+ *  {
+ *      trip_id: ObjectID[]
+ *      password: String
+ *  }
+ *
+ *  Response Body :
+ *  {
+ *     "_id": ObjectID[],
+ *     "nom": String,
+ *     "statut": String,
+ *     "utilisateur": ObjectID[],
+ *     "groupes": [
+ *         ObjectID[]
+ *     ],
+ *     "depart": {
+ *         "latitude": Number,
+ *         "longitude": Number,
+ *         "_id": ObjectID[]
+ *     },
+ *     "arrivee": {
+ *         "latitude": Number,
+ *         "longitude": Number,
+ *         "_id": ObjectID[]
+ *     },
+ *     "date_depart": Date,
+ *     "date_arrivee_estimee": Date,
+ *  }
+ */
+const terminateTrip = async (req, res) => {
+    try {
+        // L'ID de l'utilisateur est extrait à partir du token JWT
+        const userId = req.user.id
+        const user = await UserModel.findById(userId);
+
+        const { trip_id, password } = req.body;
+
+        // On récupère le trajet correspondant
+        const trip = await TripModel.findById(trip_id)
+
+        // Cas où le trajet n'est pas trouvé
+        if (!trip)
+        {
+            return res.status(404).json({message: "Trajet non trouvé"});
+        }
+
+        // On vérifie que l'utilisateur qui souhaite terminer le trajet est bien l'utilisateur concerné
+        if (trip.utilisateur.toString() !== userId)
+        {
+            return res.status(403).json({message : "Seul l'utilisateur concerné par le trajet peut le terminé"})
+        }
+        else
+        {
+            console.log("Trajet trouvé")
+
+            // On vérifie que le trajet est bien "en cours" pour pouvoir le terminer
+            if (trip.statut !== 'en cours')
+            {
+                return res.status(403).json({message: "Seul un trajet 'en cours' peut être terminé"});
+            }
+
+            // On peut annuler trajet seulement si on fournit notre mot de passe et qu'il est correct
+            const isValidPassword = await bcrypt.compare(password, user.password);
+            if (!isValidPassword) {
+                return res.status(400).json({message: "Mot de passe incorrect"})
+            }
+
+            // On termine le trajet (si mot de passe correct)
+            trip.statut = 'terminé'
+
+            // Enregistrer les modifications
+            await trip.save();
+            res.status(200).json(trip)
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur pour terminer le trajet', error:error.message})
+    }
+}
+
+
+
 
 const checkNameValidity = (name) => {
     if (!name) {
@@ -374,4 +544,4 @@ const checkIfUserIsInGroups = async (groupIds, userId) => {
     }
 }
 
-export { create, getTripInfo, updateTrip}
+export { create, getTripInfo, updateTrip, cancelTrip, terminateTrip}
