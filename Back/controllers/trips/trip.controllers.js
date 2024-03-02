@@ -3,6 +3,8 @@ import TripModel from "../../models/trip.models.js";
 import PositionModel from "../../models/position.models.js";
 import RequestParsingError from "../../tools/error.js";
 import {ObjectId} from "bson";
+import bcrypt from "bcrypt";
+import UserModel from "../../models/user.models.js";
 
 /**
  * Request Body :
@@ -110,6 +112,97 @@ const create = async (req, res) => {
     }
 }
 
+/**
+ * Recupère des informations sur le trajet correspondant à l'id 'trip_id'
+ * Les informations sont affiché seulement si l'utilisateur qui effectue la requete à effectué ou effectue le trajet
+ * Pour l'instant, les membres de groupe ne peuvent pas voir les infos sur le trajet
+ * Cela sera implémenté lors des gestions de confidentialité
+ */
+const getTripInfo = async (req, res) => {
+    try {
+        // L'ID de l'utilisateur est extrait à partir du token JWT
+        const userId = req.user.id
+        const {trip_id} = req.body;
+
+        const trip = await TripModel.findById(trip_id)
+
+        // Cas où le trajet n'est pas trouvé
+        if (!trip)
+        {
+            return res.status(404).json({message: "Trajet non trouvé"});
+        }
+
+        // TODO pour l'instant, seul l'utilisateur effectuant le trajet, ou ayant effectué le trajet peut avoir des informations dessus
+        //  a l'avenir, il y aura des questions de confidentialité a gerer, avec des membres de groupe qui pourront voir les trajet des autres
+        if (trip.utilisateur.toString() !== userId)
+        {
+            return res.status(403).json({message : "Seul l'utilisateur concerné par le trajet peut avoir des informations dessus"})
+        }
+        else
+        {
+            console.log("Trajet trouvé")
+            res.status(200).json(trip)
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération des informations du trajet', error:error.message})
+    }
+}
+
+
+const updateTrip = async (req, res) => {
+    try {
+        // L'ID de l'utilisateur est extrait à partir du token JWT
+        const userId = req.user.id
+        const user = await UserModel.findById(userId);
+
+        const { trip_id, password, startLocation, finishLocation, estimatedTime } = req.body;
+
+        // On récupère le trajet correspondant
+        const trip = await TripModel.findById(trip_id)
+
+        // Cas où le trajet n'est pas trouvé
+        if (!trip)
+        {
+            return res.status(404).json({message: "Trajet non trouvé"});
+        }
+
+        // On vérifie que l'utilisateur qui souhaite modifier le trajet est bien l'utilisateur concerné
+        if (trip.utilisateur.toString() !== userId)
+        {
+            return res.status(403).json({message : "Seul l'utilisateur concerné par le trajet peut le modifier"})
+        }
+        else
+        {
+            console.log("Trajet trouvé")
+            // On peut mettre à jour le trajet seulement si on fournit notre mot de passe et qu'il est correct
+            const isValidPassword = await bcrypt.compare(password, user.password);
+            if (!isValidPassword) {
+                return res.status(400).json({message: "Mot de passe incorrect"})
+            }
+
+            // Modification du trajet (si mot de passe correct)
+            // TODO mettre a jour le modèle objet, pour pouvoir effectuer les modifications, car pour l'instant il est impossible de retouver les start et finish position
+            if (startLocation)
+            {
+                console.log("start : ", startLocation)
+            }
+            if (finishLocation)
+            {
+                console.log("finish : ",finishLocation)
+            }
+            if (estimatedTime)
+            {
+                console.log("estimated time :", estimatedTime)
+            }
+
+            res.status(200).json(trip)
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la modification du trajet', error:error.message})
+    }
+}
+
+
 const checkNameValidity = (name) => {
     if (!name) {
         throw new RequestParsingError(400, 'Le nom du trajet est manquant.');
@@ -179,4 +272,4 @@ const checkIfUserIsInGroups = async (groupIds, userId) => {
     }
 }
 
-export { create }
+export { create, getTripInfo, updateTrip}
