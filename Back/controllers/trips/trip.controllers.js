@@ -7,6 +7,9 @@ import bcrypt from "bcrypt";
 import UserModel from "../../models/user.models.js";
 
 /**
+ * Création d'un trajet.
+ * Le trajet contient notamment la liste des groupes associé, ainsi que le lieu de départ, arrivée et heure d'arrivée estimé
+ *
  * Request Body :
  * {
  *    name: String,
@@ -28,7 +31,6 @@ import UserModel from "../../models/user.models.js";
  *    name: String,
  *    groupIds: ObjectID[]
  *    start: {
- *        id: ObjectID
  *        timestamp: Date
  *        location:  {
  *            latitude: Number
@@ -36,7 +38,6 @@ import UserModel from "../../models/user.models.js";
  *        }
  *    },
  *    finish: {
- *        id: ObjectID
  *        timestamp: Date
  *        location:  {
  *            latitude: Number
@@ -61,23 +62,30 @@ const create = async (req, res) => {
         checkEstimatedTimeValidity(estimatedTimeDate, currentDate);
 
         // Ajouter le trajet dans la base de donnée
-        const newTrip = new TripModel({ nom: name, utilisateur:userId, groupes: uniqueGroupIds});
+        const newTrip = new TripModel({
+            nom: name,
+            utilisateur:userId,
+            groupes: uniqueGroupIds,
+            depart: { latitude: startLocation.latitude, longitude: startLocation.longitude},
+            arrivee: { latitude: finishLocation.latitude, longitude: finishLocation.longitude},
+            date_depart: currentDate,
+            date_arrivee_estimee: estimatedTime
+        });
+
         const trip = await newTrip.save();
 
-        // Ajouter le départ et l'arrivée à la base de données
+
+        // Ajouter le départ à la base de donnée
+        // Remarque : on n'ajoute pas l'arrivée à la base de données car c'est une arrivée ESTIMEE, et donc pas une véritable localisation
+        // Pour simplification : on fait l'hypothèse que la localisation de départ est réelle
         const newStart = new PositionModel({
             coordonnees: { latitude: startLocation.latitude, longitude: startLocation.longitude },
             timestamp: currentDate,
             trajet: trip.id
         });
-        const newFinish = new PositionModel({
-            coordonnees: { latitude: finishLocation.latitude, longitude: finishLocation.longitude },
-            timestamp: estimatedTime,
-            trajet: trip.id
-        });
 
         const start = await newStart.save();
-        const finish = await newFinish.save();
+
 
         // Créer la réponse et la renvoyer
         const response = {
@@ -85,19 +93,17 @@ const create = async (req, res) => {
             name: trip.nom,
             groupIds: trip.groupes,
             start: {
-                id: start.id,
-                timestamp: start.timestamp,
+                timestamp: trip.date_depart,
                 location:  {
-                    latitude: start.coordonnees.latitude,
-                    longitude: start.coordonnees.longitude
+                    latitude: trip.depart.latitude,
+                    longitude: trip.depart.longitude
                 }
             },
             finish: {
-                id: finish.id,
-                timestamp: finish.timestamp,
+                timestamp: trip.date_arrivee_estimee,
                 location:  {
-                    latitude: finish.coordonnees.latitude,
-                    longitude: finish.coordonnees.longitude
+                    latitude: trip.arrivee.latitude,
+                    longitude: trip.arrivee.longitude,
                 }
             }
         };
@@ -117,7 +123,36 @@ const create = async (req, res) => {
  * Les informations sont affiché seulement si l'utilisateur qui effectue la requete à effectué ou effectue le trajet
  * Pour l'instant, les membres de groupe ne peuvent pas voir les infos sur le trajet
  * Cela sera implémenté lors des gestions de confidentialité
+ *
+ *  Request Body :
+ *  {
+ *      trip_id: ObjectID[]
+ *  }
+ *
+ *  Response Body :
+ *  {
+ *     "_id": ObjectID[],
+ *     "nom": String,
+ *     "statut": String,
+ *     "utilisateur": ObjectID[],
+ *     "groupes": [
+ *         ObjectID[]
+ *     ],
+ *     "depart": {
+ *         "latitude": Number,
+ *         "longitude": Number,
+ *         "_id": ObjectID[]
+ *     },
+ *     "arrivee": {
+ *         "latitude": Number,
+ *         "longitude": Number,
+ *         "_id": ObjectID[]
+ *     },
+ *     "date_depart": Date,
+ *     "date_arrivee_estimee": Date,
+ *  }
  */
+
 const getTripInfo = async (req, res) => {
     try {
         // L'ID de l'utilisateur est extrait à partir du token JWT
@@ -148,7 +183,54 @@ const getTripInfo = async (req, res) => {
     }
 }
 
-
+/**
+ * Mettre o jour les informations sur le trajet correspondant à l'id 'trip_id'
+ * Mise a jour seulement si l'utilisateur effectue le trajet, et que son mot de passe est correct
+ * Mise a jour seulement si le trajet est "en cours"
+ * Données pouvant être mise a jour :
+ *  - Lieu de départ
+ *  - Lieu d'arrivée
+ *  - Heure d'arrivée estimé
+ *  Seul les champs fournis sont mis a jour
+ *
+ *  Request Body :
+ *  {
+ *      trip_id: ObjectID[],
+ *      password: String,
+ *      startLocation : {
+ *          latitude: Number,
+ *          longitude: Number
+ *      },
+ *      finishLocation: {
+ *          latitude: Number
+ *          longitude: Number
+ *      },
+ *      estimatedTime : Date
+ *  }
+ *
+ *  Response Body :
+ *  {
+ *     "_id": ObjectID[],
+ *     "nom": String,
+ *     "statut": String,
+ *     "utilisateur": ObjectID[],
+ *     "groupes": [
+ *         ObjectID[]
+ *     ],
+ *     "depart": {
+ *         "latitude": Number,
+ *         "longitude": Number,
+ *         "_id": ObjectID[]
+ *     },
+ *     "arrivee": {
+ *         "latitude": Number,
+ *         "longitude": Number,
+ *         "_id": ObjectID[]
+ *     },
+ *     "date_depart": Date,
+ *     "date_arrivee_estimee": Date,
+ *  }
+ */
 const updateTrip = async (req, res) => {
     try {
         // L'ID de l'utilisateur est extrait à partir du token JWT
@@ -174,6 +256,13 @@ const updateTrip = async (req, res) => {
         else
         {
             console.log("Trajet trouvé")
+
+            // On vérifie que le trajet est bien "en cours" pour pouvoir le modifier
+            if (trip.statut !== 'en cours')
+            {
+                return res.status(403).json({message: "Seul un trajet 'en cours' peut être modifié"});
+            }
+
             // On peut mettre à jour le trajet seulement si on fournit notre mot de passe et qu'il est correct
             const isValidPassword = await bcrypt.compare(password, user.password);
             if (!isValidPassword) {
@@ -181,20 +270,33 @@ const updateTrip = async (req, res) => {
             }
 
             // Modification du trajet (si mot de passe correct)
-            // TODO mettre a jour le modèle objet, pour pouvoir effectuer les modifications, car pour l'instant il est impossible de retouver les start et finish position
+            // Seuls les champs renseignés subissent une modification
             if (startLocation)
             {
                 console.log("start : ", startLocation)
+                trip.depart.longitude = startLocation.longitude
+                trip.depart.latitude = startLocation.latitude
             }
             if (finishLocation)
             {
                 console.log("finish : ",finishLocation)
+                trip.arrivee.longitude = finishLocation.longitude
+                trip.arrivee.latitude = finishLocation.latitude
             }
             if (estimatedTime)
             {
+                // On vérifie que la date d'arrivée estimé est cohérente avant de faire des modifications
+                const estimatedTimeDate = Date.parse(estimatedTime);
+                const startTimeDate = Date.parse(trip.date_depart)
+                checkEstimatedTimeValidity(estimatedTimeDate, startTimeDate);
+
+                // Modification de la date d'arrivée estimée
                 console.log("estimated time :", estimatedTime)
+                trip.date_arrivee_estimee = estimatedTime
             }
 
+            // Enregistrer les modifications
+            await trip.save();
             res.status(200).json(trip)
         }
     } catch (error) {
