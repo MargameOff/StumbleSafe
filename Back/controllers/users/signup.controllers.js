@@ -3,12 +3,30 @@ import Jwt from 'jsonwebtoken';
 import {checkIfIsValidMail} from '../../tools/format.js';
 import bcrypt from "bcrypt";
 
+/**
+ * 
+ * Request body : {
+ * userInfos: {
+ *  nom: string,
+ *  nom_affiche: string,
+ *  email: string|email format,
+ *  password: string
+ * }
+ * }
+ * 
+ * Response body : {
+ *  nom: string,
+ *  nom_affiche: string,
+ *  email: string|email format,
+ *  token: string
+ * }
+ */
 const signup = async (req, res) => {
     try {
         // Récupérer les données de l'utilisateur à partir du corps de la requête
-        console.log(req.body.userInfos);
-        // Vérifier si l'utilisateur existe déjà dans la base de données
         const { nom, nom_affiche, email, password } = req.body.userInfos; // Assurez-vous que req.body.userInfos contient les données correctes
+
+        // Vérifier si l'utilisateur existe déjà dans la base de données
         const userEmailExists = await checkIfUserEmailExists(email);
         const userNameExists = await checkIfUserNameExists(nom);
 
@@ -56,7 +74,21 @@ const signup = async (req, res) => {
     }
 }
 
-
+/**
+ * 
+ * Request body : {
+ * userInfos: {
+ *  email: string|email format,
+ *  password: string
+ * }
+ * 
+ * Response body : {
+ *  message: string,
+ *  token: string
+ * }
+ * 
+ * }
+ */
 const login = async (req, res) => {
     // Connexion à la base de données
     // await connectDB();   

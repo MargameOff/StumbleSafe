@@ -1,6 +1,11 @@
 import Jwt from 'jsonwebtoken';
 
-
+/**
+ * If a route has this middleware then adding in your HTTP request :
+ * header : {
+ *  Authorization: *JWT Token*
+ * }
+ */
 const checkIfUserIsConnected = async(req, res, next) => {
 
     // récupère le token JWT envoyé dans le header Authorization

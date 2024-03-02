@@ -1,5 +1,21 @@
 import GroupModel from '../../models/group.models.js';
 
+/**
+ * 
+ * Request body : {
+ * groupInfos: {
+ *  nom: string,
+ * }
+ * }
+ * 
+ * Response body : {
+ *  nom: string,
+ *  nom_affiche: string,
+ *  email: string|email format,
+ *  token: string
+ * }
+ * 
+ */
 const create = async (req, res) => {
     try {
 
