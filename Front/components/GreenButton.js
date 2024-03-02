@@ -2,12 +2,13 @@ import { Link } from "expo-router";
 import { Button } from "@rneui/themed";
 import { LinearGradient } from "expo-linear-gradient";
 
-export default function GreenButton({ label, link }) {
+export default function GreenButton({ label, link, onPress }) {
   return (
     <Link href={link} asChild >
       <Button
         title={label}
         loading={false}
+        onPress={onPress}
         loadingProps={{ size: "small", color: "white" }}
         ViewComponent={LinearGradient}
         linearGradientProps={{
