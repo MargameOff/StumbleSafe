@@ -20,7 +20,7 @@ const checkIfUserIsConnected = async(req, res, next) => {
         }
     } catch(err) {}
     
-    res.status(500).json({ message: 'Erreur token d\'authentification invalide' });
+    res.status(401).json({ message: 'Erreur token d\'authentification invalide' });
 }
 
 export default checkIfUserIsConnected;

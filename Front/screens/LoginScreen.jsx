@@ -26,9 +26,6 @@ export function LoginScreen() {
   }, [])
 
   async function loginClk(event) {
-    
-    console.log("click username > "+username)
-    console.log("click password > "+password)
 
     fetch("http://192.168.1.24:8080/api/users/login", {
       method: "POST",
@@ -113,6 +110,7 @@ const styles = StyleSheet.create({
     color: "#ababab",
   },
   errorText: {
-    color: "#E35050"
+    color: "#E35050",
+    textAlign: "center"
   }
 });

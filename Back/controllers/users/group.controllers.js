@@ -8,12 +8,7 @@ import GroupModel from '../../models/group.models.js';
  * }
  * }
  * 
- * Response body : {
- *  nom: string,
- *  nom_affiche: string,
- *  email: string|email format,
- *  token: string
- * }
+ * Response body : Group's model
  * 
  */
 const create = async (req, res) => {

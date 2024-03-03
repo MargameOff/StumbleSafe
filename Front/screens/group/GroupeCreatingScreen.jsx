@@ -7,11 +7,52 @@ import GreenButton from "../../components/GreenButton";
 import TransparentButton from "../../components/TransparentButton";
 import IconInput from "../../components/IconInput";
 import CheckBoxStumble from "../../components/CheckBoxStumble";
+import { router } from "expo-router";
+import { getJwtToken } from "../../Utils";
 
 export function GroupeCreatingScreen() {
 
   const [namegroup, setNameGroup] = useState("");
   const [isAgree, setAgree] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  async function createGroupClk(event) {
+    
+    console.log("click namegroup > "+namegroup)
+    if(!isAgree) {
+        setErrorMsg("Merci d'accepter le partage de votre position en cochant la case");
+        return;
+    }
+
+    getJwtToken((token) => { 
+      if(token != null) { // if token is null (never happen theoretically)
+        fetch("http://192.168.1.24:8080/api/groups/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": token
+          },
+          body: JSON.stringify({
+            "groupInfos": {
+                "nom": namegroup,
+            }
+        }),
+        }).then(async (res) => {
+          const data = await res.json();
+          if(res.status == 200) return data;
+          return Promise.reject(data);
+        })
+        .then((data) => {
+          router.replace('/dashboard');
+        }).catch((err) => {
+          setErrorMsg(err.message)
+        });
+      } else {
+        router.replace('/login');
+      }
+    
+    })
+  }
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
@@ -24,12 +65,14 @@ export function GroupeCreatingScreen() {
           />
 
           <Text style={styles.title}>Créer un Groupe</Text>
-          <View style={{ height: 30 }} />
+          <View style={{ height: 15 }} />
+          <Text style={{...styles.buttonText, ...styles.errorText}}>{errorMsg}</Text>
+          <View style={{ height: 15 }} />
           <IconInput value={namegroup} onValueUpdated={(text) => setNameGroup(text)} label={"Nom du groupe"} isPassword={false}/>
           <View style={{ height: 30 }} />
           <CheckBoxStumble text="J'accepte de partager ma position avec les membres de ce groupe" isChecked={isAgree} onChecked={setAgree}></CheckBoxStumble>
           <View style={{ height: 30 }} />
-          <GreenButton label={"Confirmer"} link={"/groupecreating"} />
+          <GreenButton label={"Confirmer"} link={"/group/creating"} onPress={createGroupClk} />
           <View style={{ height: 10 }} />
         </LinearGradient>
       </ScrollView>
@@ -60,4 +103,14 @@ const styles = StyleSheet.create({
     marginTop: -50,
     marginBottom: -50,
   },
+  buttonText: {
+    color: "white",
+    fontFamily: "Montserrat_600SemiBold",
+    fontSize: 16,
+  },
+  errorText: {
+    color: "#E35050",
+    fontSize: 10,
+    textAlign: 'center'
+  }
 });
