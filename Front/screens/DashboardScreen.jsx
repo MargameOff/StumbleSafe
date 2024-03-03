@@ -40,6 +40,7 @@ export function DashboardScreen() {
             <View style={{ height: 40 }} />
 
             <TransparentButton label={"Se deconnecter"} link={"/home"} onPress={disconnectClk}/>
+            <TransparentButton label={"Creer groupe"} link={"/group/creating"}/>
 
           </LinearGradient>
         </View>
