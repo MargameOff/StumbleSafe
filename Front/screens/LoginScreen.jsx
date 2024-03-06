@@ -1,11 +1,9 @@
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { Image } from "expo-image";
-import { Button } from "@rneui/themed";
 import { LinearGradient } from "expo-linear-gradient";
 import { vw, vh } from "react-native-expo-viewport-units";
-import { Input } from "@rneui/themed";
 import GreenButton from "../components/Buttons/GreenButton";
 import TransparentButton from "../components/Buttons/TransparentButton";
 import IconInput from "../components/IconInput";
@@ -35,7 +33,7 @@ export function LoginScreen() {
       },
       body: JSON.stringify({
         "userInfos": {
-            "email": username,
+            "nom": username,
             "password": password
         }
     }),

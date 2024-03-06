@@ -1,5 +1,5 @@
 import express from 'express';
-import {login, signup} from '../controllers/users/signup.controllers.js';
+import {login, refresh, signup} from '../controllers/users/signup.controllers.js';
 import bodyParser from 'body-parser';
 import checkIfUserIsConnected from '../controllers/middlewares/auth.middleware.js';
 
@@ -139,6 +139,7 @@ router.post('/signup', jsonParser, signup);
  *         description: Erreur serveur. Impossible de traiter la demande d'authentification.
  */
 router.post('/login', jsonParser, login)
+router.post('/login/refresh', checkIfUserIsConnected, refresh);
 
 /**
  * @swagger
@@ -209,11 +210,5 @@ router.patch('/update/name', checkIfUserIsConnected, updateDisplayName)
  *         description: Erreur serveur. Impossible de mettre à jour le profil utilisateur.
  */
 router.patch('/update/password', checkIfUserIsConnected, updatePassword)
-
-
-// route pour tester le login
-router.post('/testlogin', checkIfUserIsConnected, jsonParser, function(req, res) {
-    res.json({ok: "hi"})
-})
 
 export default router;
