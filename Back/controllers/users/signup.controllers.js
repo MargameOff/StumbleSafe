@@ -78,7 +78,7 @@ const signup = async (req, res) => {
  * 
  * Request body : {
  * userInfos: {
- *  email: string|email format,
+ *  nom: string,
  *  password: string
  * }
  * 
@@ -96,8 +96,8 @@ const login = async (req, res) => {
         // Récupérer les données de l'utilisateur à partir du corps de la requête
         console.log(req.body.userInfos);
         // Vérifier si l'utilisateur existe déjà dans la base de données
-        const { email, password } = req.body.userInfos; // Assurez-vous que req.body.userInfos contient les données correctes
-        const user = await UserModel.findOne({ email });
+        const { nom, password } = req.body.userInfos; // Assurez-vous que req.body.userInfos contient les données correctes
+        const user = await UserModel.findOne({ nom });
 
         if(user) {
             const isValidPassword = await bcrypt.compare(password, user.password);
@@ -115,12 +115,25 @@ const login = async (req, res) => {
 }
 
 /**
+ * 
+ * Response body : {
+ *  message: string,
+ *  token: string
+ * }
+ * 
+ */
+const refresh = async (req, res) => {
+    const token = await createJwt(req.user._id);
+    res.json({"message": "Le token est actualisé", "token": token}).status(200)
+}
+
+/**
  * Créer un token JWT
  * @param {*} id Identifiant de l'utilisateur
  * @returns Un token d'authentification pour une durée limitée contenant l'ID de l'utilisateur en DB
  */
 const createJwt = async (id) => {
-    return Jwt.sign({'id': id}, process.env.JWT_SECRET, { expiresIn: '1d' })
+    return Jwt.sign({'id': id}, process.env.JWT_SECRET, { expiresIn: '5d' })
 }
 
 const checkIfUserEmailExists = async(email) => {
@@ -143,5 +156,6 @@ const checkIfUserNameExists = async(nom) => {
 
 export {
     signup,
-    login
+    login,
+    refresh
 }
