@@ -6,6 +6,7 @@ import BottomBar from "../../navigation/BottomBar";
 import { LinearGradient } from "expo-linear-gradient";
 import * as FileSystem from "expo-file-system";
 import { JWT_CACHE_FILE } from "../../Utils";
+import ImageButton from "../../components/Buttons/ImageButton";
 
 export default function Layout() {
   function disconnectClk() {
@@ -19,10 +20,12 @@ export default function Layout() {
           <View style={styles.container}>
             <View style={styles.header}>
               <View style={styles.leftContainer}>
-                <Image
-                  source={require("../../assets/OIG.jpg")}
-                  style={styles.userIcon}
-                />
+              <ImageButton
+                  link="/home"
+                onPress={()=>console.log("Button")}
+                source={require("../../assets/OIG.jpg")}
+                imageStyle={styles.userIcon}
+              />
               </View>
               <View style={[styles.centerContainer, { flex: 1 }]}>
                 <Text
