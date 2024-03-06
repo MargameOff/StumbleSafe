@@ -1,5 +1,5 @@
-import { RegisterScreen } from "../../screens/RegisterScreen";
+import { AccountScreen } from "../../screens/AccountScreen.jsx";
 
 export default Account = () => {
-    return RegisterScreen();
+    return AccountScreen();
 }

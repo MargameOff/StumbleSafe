@@ -22,7 +22,6 @@ export default function Layout() {
               <View style={styles.leftContainer}>
               <ImageButton
                   link="/user/account"
-                onPress={()=>console.log("Button")}
                 source={require("../../assets/OIG.jpg")}
                 imageStyle={styles.userIcon}
               />
