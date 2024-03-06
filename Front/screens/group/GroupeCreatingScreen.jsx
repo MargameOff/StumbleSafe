@@ -18,7 +18,6 @@ export function GroupeCreatingScreen() {
 
   async function createGroupClk(event) {
     
-    console.log("click namegroup > "+namegroup)
     if(!isAgree) {
         setErrorMsg("Merci d'accepter le partage de votre position en cochant la case");
         return;
@@ -26,7 +25,7 @@ export function GroupeCreatingScreen() {
 
     getJwtToken((token) => { 
       if(token != null) { // if token is null (never happen theoretically)
-        fetch("http://192.168.1.24:8080/api/groups/create", {
+        fetch("http://localhost:8080/api/groups/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

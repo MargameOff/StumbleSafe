@@ -6,18 +6,31 @@ import {
   Montserrat_600SemiBold,
   useFonts,
 } from "@expo-google-fonts/montserrat";
-import { getJwtToken } from "../Utils";
 import { router } from 'expo-router';
+import { JWT_CACHE_FILE, getJwtToken } from "../Utils";
+import * as FileSystem from 'expo-file-system';
+
 export function LoadingScreen() {
     let [fontsLoaded] = useFonts({ Montserrat_700Bold, Montserrat_600SemiBold });
 
     getJwtToken((token) => {
-      console.log("LoadingS => "+token)
-      if(token == null) {
-        router.replace('/home');
-      } else {
+      fetch("http://localhost:8080/api/users/login/refresh", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token
+        }
+      }).then(async (res) => {
+        const data = await res.json();
+        if(res.status == 200) return data;
+        return Promise.reject(data);
+      })
+      .then((data) => {
+        FileSystem.writeAsStringAsync(JWT_CACHE_FILE, data.token, {encoding: 'utf8'})
         router.replace('/dashboard');
-      }
+      }).catch(() => {
+        router.replace('/home');
+      })
     })
 
     if (!fontsLoaded) {
