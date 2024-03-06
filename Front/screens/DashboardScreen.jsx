@@ -10,8 +10,8 @@ import {
   Montserrat_600SemiBold,
   useFonts,
 } from "@expo-google-fonts/montserrat";
-import GreenButton from "../components/GreenButton";
-import TransparentButton from "../components/TransparentButton";
+import GreenButton from "../components/Buttons/GreenButton";
+import TransparentButton from "../components/Buttons/TransparentButton";
 import * as FileSystem from 'expo-file-system';
 import { JWT_CACHE_FILE } from "../Utils";
 

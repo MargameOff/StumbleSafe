@@ -36,5 +36,8 @@ You can modify the .env file to change the database configuration.
 ### Installation des dépendances
 ```npm i```
 
+### A jouer une fois
+```adb -s emulator-5554 reverse tcp:8080 tcp:8080```
+
 ### Start in Dev
 ```npx expo start```

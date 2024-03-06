@@ -3,8 +3,8 @@ import { View, StyleSheet, Text, KeyboardAvoidingView, ScrollView } from "react-
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { vw, vh } from "react-native-expo-viewport-units";
-import GreenButton from "../../components/GreenButton";
-import TransparentButton from "../../components/TransparentButton";
+import GreenButton from "../../components/Buttons/GreenButton";
+import TransparentButton from "../../components/Buttons/TransparentButton";
 import IconInput from "../../components/IconInput";
 import CheckBoxStumble from "../../components/CheckBoxStumble";
 import { router } from "expo-router";

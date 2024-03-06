@@ -1,11 +1,18 @@
 import React from "react";
-import { View, StyleSheet, Text, KeyboardAvoidingView, ScrollView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  KeyboardAvoidingView,
+  ScrollView,
+} from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { vw, vh } from "react-native-expo-viewport-units";
-import GreenButton from "../components/GreenButton";
-import TransparentButton from "../components/TransparentButton";
+import GreenButton from "../components/Buttons/GreenButton";
+import TransparentButton from "../components/Buttons/TransparentButton";
 import IconInput from "../components/IconInput";
+import ReturnButton from "../components/Buttons/ReturnButton";
 
 export function RegisterScreen() {
   return (
@@ -17,18 +24,39 @@ export function RegisterScreen() {
             source={require("../assets/login-illustration.png")}
             style={styles.image}
           />
+          <ReturnButton />
 
           <Text style={styles.title}>Créer un Compte</Text>
           <View style={{ height: 30 }} />
-          <IconInput varName={"identifiant"} label={"Identifiant d'utilisateur"} isPassword={false}/>
+          <IconInput
+            varName={"identifiant"}
+            label={"Identifiant d'utilisateur"}
+            isPassword={false}
+          />
           <View style={{ height: 15 }} />
-          <IconInput varName={"email"} label={"Adresse mail"} isPassword={false}/>
+          <IconInput
+            varName={"email"}
+            label={"Adresse mail"}
+            isPassword={false}
+          />
           <View style={{ height: 15 }} />
-          <IconInput varName={"nomUtilisateur"} label={"Nom d'utilisateur"} isPassword={false}/>
+          <IconInput
+            varName={"nomUtilisateur"}
+            label={"Nom d'utilisateur"}
+            isPassword={false}
+          />
           <View style={{ height: 15 }} />
-          <IconInput varName={"motDePasse"} label={"Mot de passe"} isPassword={true}/>
+          <IconInput
+            varName={"motDePasse"}
+            label={"Mot de passe"}
+            isPassword={true}
+          />
           <View style={{ height: 15 }} />
-          <IconInput varName={"confirmMotDePasse"} label={"Confirmer le mot de passe"} isPassword={true}/>
+          <IconInput
+            varName={"confirmMotDePasse"}
+            label={"Confirmer le mot de passe"}
+            isPassword={true}
+          />
           <View style={{ height: 30 }} />
           <GreenButton label={"Créer le compte"} link={"/home"} />
           <View style={{ height: 10 }} />

@@ -1,8 +1,6 @@
-import { Link } from "expo-router";
 import React from "react";
 import { View, StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
 import { Image } from "expo-image";
-import { Button } from "@rneui/themed";
 import { LinearGradient } from "expo-linear-gradient";
 import { vw, vh } from "react-native-expo-viewport-units";
 import {
@@ -10,8 +8,8 @@ import {
   Montserrat_600SemiBold,
   useFonts,
 } from "@expo-google-fonts/montserrat";
-import GreenButton from "../components/GreenButton";
-import TransparentButton from "../components/TransparentButton";
+import GreenButton from "../components/Buttons/GreenButton";
+import TransparentButton from "../components/Buttons/TransparentButton";
 export function HomeScreen() {
     let [fontsLoaded] = useFonts({ Montserrat_700Bold, Montserrat_600SemiBold });
     if (!fontsLoaded) {

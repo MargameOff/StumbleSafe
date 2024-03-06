@@ -6,12 +6,13 @@ import { Button } from "@rneui/themed";
 import { LinearGradient } from "expo-linear-gradient";
 import { vw, vh } from "react-native-expo-viewport-units";
 import { Input } from "@rneui/themed";
-import GreenButton from "../components/GreenButton";
-import TransparentButton from "../components/TransparentButton";
+import GreenButton from "../components/Buttons/GreenButton";
+import TransparentButton from "../components/Buttons/TransparentButton";
 import IconInput from "../components/IconInput";
 import { JWT_CACHE_FILE, getJwtToken } from "../Utils";
 import * as FileSystem from 'expo-file-system';
 
+import ReturnButton from "../components/Buttons/ReturnButton";
 export function LoginScreen() {
 
   const [username, setUsername] = useState('');
@@ -27,7 +28,7 @@ export function LoginScreen() {
 
   async function loginClk(event) {
 
-    fetch("http://192.168.1.24:8080/api/users/login", {
+    fetch("http://localhost:8080/api/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,6 +40,7 @@ export function LoginScreen() {
         }
     }),
     }).then((res) => {
+      console.log(res);
       return res.json();
     })
     .then((data) => {
@@ -61,6 +63,7 @@ export function LoginScreen() {
           source={require("../assets/logo/logo.png")}
           style={styles.image}
         />
+        <ReturnButton />
         <View style={{ height: 30 }} />
         <Text style={styles.title}>Se Connecter</Text>
         <View style={{ height: 15 }} />
