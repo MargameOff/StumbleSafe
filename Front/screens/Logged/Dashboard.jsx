@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   StyleSheet,
   Text,
@@ -14,54 +14,12 @@ import TitleText from "../../components/TitleText";
 import GroupItem from "../../components/Items/GroupItem";
 import AlertItem from "../../components/Items/AlertItem";
 import Notification from "../../components/Notification";
+import {getJwtToken} from "../../Utils";
+import {router} from "expo-router";
 
 // TODO
 // DONNEES DE TEST, A REMPLACER PAR LES DONNEES RECUPEREES DE L'API UNE FOIS CELLE-CI IMPLEMENTEE
 
-const GROUPDATA = [
-  {
-    id: "1",
-    name: "IFA",
-    nbMembers: 10,
-    members: [
-      "@Thomas",
-      "@Hugo",
-      "@Margot",
-      "@Marie",
-      "@Papa",
-      "@Maman",
-      "@Tom",
-      "@Jean-Marc Petit",
-      "@MM",
-      "@Jean-Marc Petit",
-    ],
-  },
-  {
-    id: "2",
-    name: "Famille",
-    members: ["@Marie", "@Papa", "@Maman", "@Tom"],
-  },
-  {
-    id: "3",
-    name: "Crystal Clear",
-    members: ["@Jean-Marc Petit", "@MM"],
-  },
-  {
-    id: "4",
-    name: "Pokemon Go",
-    members: ["@Thomas", "@Hugo", "@Margot", "@Marie", "@Papa", "@Maman"],
-  },
-  {
-    id: "5",
-    name: "Groupe de Test",
-    members: ["@Thomas", "@Hugo", "@Margot", "@Marie", "@Papa", "@Maman"],
-  },
-  {
-    id: "6",
-    name: "Coucou",
-    members: ["@Thomas", "@Hugo", "@Margot", "@Marie", "@Papa", "@Maman"],
-  },
-];
 const ALERTDATA = [
   {
     id: "1",
@@ -89,9 +47,35 @@ const ALERTDATA = [
 export function Dashboard() {
   const [selectedGroupId, setSelectedGroupId] = useState(null);
   const [selectedAlertId, setSelectedAlertId] = useState(null);
+  const [groups, setGroups] = useState([]);
+
   // Rendu pour afficher les groupes
+  const getGroups = async () => {
+    getJwtToken((token) => {
+      if(token != null) {
+        fetch("http://localhost:8080/api/groups/", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": token,
+          }
+        }).then(async (res) => {
+          let data = await res.json();
+          if(res.status === 200 && data) {
+            setGroups(data.map(group => { return { id: group._id, name: group.nom, members: group.membres.map(member => member.nom_affiche) } }));
+          }
+          return Promise.reject(data);
+        }).catch(error => console.log(error));
+      } else {
+        router.replace('/login');
+      }
+    })
+  };
+  useEffect(() => {
+    getGroups();
+  }, []);
   const renderGroupItems = () => {
-    return GROUPDATA.map((item) => {
+    return groups.map((item) => {
       const backgroundColor =
         item.id === selectedGroupId
           ? "rgba(255, 255, 255, 0.3)"
@@ -135,8 +119,29 @@ export function Dashboard() {
       </View>
       <View style={{ flex: 0.6 }}>
         <TitleText title={"Mes Groupes"} />
-        <ScrollView style={{ flex: 1 }}>{renderGroupItems()}</ScrollView>
+        <ScrollView style={{ flex: 1 }}>
+          { groups.length === 0
+              ? <View style={styles.container}><Text style={styles.title}>Vous n'appartenez à aucun groupe.</Text></View>
+              : renderGroupItems()
+          }
+        </ScrollView>
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  title: {
+    fontSize: 18,
+    fontFamily: "Montserrat_Medium",
+    color: "white",
+    marginTop: 30,
+  },
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100%",
+    width: "100%",
+  },
+});
