@@ -4,17 +4,17 @@ import {
     StyleSheet,
     Text,
     KeyboardAvoidingView,
-    ScrollView,
+    ScrollView, TextInput,
 } from "react-native";
 import {LinearGradient} from "expo-linear-gradient";
 import {vw, vh} from "react-native-expo-viewport-units";
 import GreenButton from "../components/Buttons/GreenButton";
-import TransparentButton from "../components/Buttons/TransparentButton";
 import IconInput from "../components/IconInput";
 import ReturnButton from "../components/Buttons/ReturnButton";
 import RoundImageViewer from "../components/RoundImageViewer";
-import {getJwtToken, JWT_CACHE_FILE} from "../Utils";
+import {getJwtToken} from "../Utils";
 import DisableInput from "../components/DisableInput";
+import ParagraphText from "../components/ParagraphText";
 
 async function getProfile(token) {
     const url = "http://localhost:8080/api/users/profile";
@@ -40,7 +40,12 @@ async function getProfile(token) {
 export function AccountScreen() {
 
     const [userInfo, setUserInfo] = useState(null);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
+    const [displayName, setDisplayName] = useState('');
+
+    // Récupération du profile
     useEffect(() => {
         getJwtToken((token) => {
             console.log("Token : "+token)
@@ -58,6 +63,53 @@ export function AccountScreen() {
         });
     }, []);
 
+
+    // Modification du compte utilisateur
+    // const updateProfile = async () =>
+    // {
+    //     const updateRequests = [];
+    //
+    //     if (userInfo.nom_affiche)
+    //     {
+    //         updateRequests.push(fetch("http://localhost:8080/api/users/update/name", {
+    //             method:"PATCH",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 "Authorization":`{$token}`,
+    //             },
+    //             body: JSON.stringify({
+    //                 nom_affiche:userInfo.nom_affiche
+    //             }),
+    //         }))
+    //     }
+    //
+    //     if (userInfo.newPassword){
+    //         updateRequests.push(fetch("http://localhost:8080/api/users/update/password"), {
+    //             method:"PATCH",
+    //             headers: {
+    //                 "Content-Type":"application/json",
+    //                 "Authorization":`{$token}`
+    //             },
+    //             body: JSON.stringify({
+    //                 password: userInfo.password,
+    //                 newPassword: new_password
+    //             })
+    //         })
+    //     }
+    //
+    //     // Envoie de toute les requetes de modification
+    //     const responses = await Promise.all(updateRequests)
+    //
+    //     // Vérifier les réponses et mettre à jour les messages de succès ou d'erreur
+    //     const successResponses = responses.filter(response => response.ok);
+    //     if (successResponses.length === updateRequests.length) {
+    //         setSuccessMessage('Modifications enregistrées avec succès.');
+    //     } else {
+    //         setErrorMessage('Une erreur est survenue lors de l\'enregistrement des modifications.');
+    //     }
+    //
+    // }
+
     return (
         <LinearGradient colors={["#46294F", "#120721"]} style={styles.gradient}>
             <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
@@ -66,45 +118,55 @@ export function AccountScreen() {
                         placeholderImageSource={require("../assets/OIG.jpg")}
                     />
                     <ReturnButton/>
+                    {/* Messages de succès ou d'erreur */}
+                    {successMessage !== '' && <Text>{successMessage}</Text>}
+                    {errorMessage !== '' && <Text>{errorMessage}</Text>}
                     <View style={{height: 30}}/>
                     {userInfo && (
                         <>
-                        <DisableInput
+                            <ParagraphText text={"Nom d'utilisateur"} />
+                            <DisableInput
                             varName="nom"
                             label={userInfo.nom}
                             isPassword={false}
                             disabled={true}
+                            value={userInfo.nom}
                         />
                         <View style={{height: 15}}/>
-                        <DisableInput
-                            varName={"email"}
-                            label={userInfo.email}
-                            isPassword={false}
-                            disabled={true}
-                        />
+                            <ParagraphText text={"Email"} />
+                            <DisableInput
+                                varName={"email"}
+                                label={userInfo.email}
+                                isPassword={false}
+                                disabled={true}
+                                value={userInfo.email}
+                            />
                         <View style={{height: 15}}/>
-                        <DisableInput
-                            varName={"nomUtilisateur"}
-                            label={userInfo.nom_affiche}
-                            isPassword={false}
-                            disabled={false}
-                        />
+                            <ParagraphText text={"Nom affiché"} />
+                            <IconInput
+                                value={userInfo.nom_affiche}
+                                placeholder="Nom affiché"
+                                onChangeText={setDisplayName}
+                                isPassword={false}
+                                label={userInfo.nom_affiche}
+                            />
                         </>
                         )}
+                    <ParagraphText text={"Modification Mot de Passe"} />
                     <View style={{height: 15}}/>
-                    <IconInput
-                        varName={"motDePasse"}
-                        label={"Mot de passe actuel"}
-                        isPassword={true}
-                    />
+                        <IconInput
+                            varName={"motDePasse"}
+                            label={"Mot de passe actuel"}
+                            isPassword={true}
+                        />
                     <View style={{height: 15}}/>
                     <IconInput
                         varName={"confirmMotDePasse"}
-                        label={"Confirmer le nouveau mot de passe"}
+                        label={"Nouveau mot de passe"}
                         isPassword={true}
                     />
                     <View style={{height: 30}}/>
-                    <GreenButton label={"Modifier Compte"} link={"/dashboard"}/>
+                    <GreenButton label={"Modifier Compte"} onClick={() => console.log(displayName)} link={"/dashboard"}/>
                 </ScrollView>
             </KeyboardAvoidingView>
         </LinearGradient>
@@ -136,4 +198,10 @@ const styles = StyleSheet.create({
         marginTop: -50,
         marginBottom: -50,
     },
+    input: {
+        color: '#ababab',
+        marginLeft: 10,
+        fontSize: 15,
+        flex: 1,
+    }
 });
