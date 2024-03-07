@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
     View,
     StyleSheet,
@@ -6,7 +6,6 @@ import {
     KeyboardAvoidingView,
     ScrollView,
 } from "react-native";
-import {Image} from "expo-image";
 import {LinearGradient} from "expo-linear-gradient";
 import {vw, vh} from "react-native-expo-viewport-units";
 import GreenButton from "../components/Buttons/GreenButton";
@@ -14,8 +13,51 @@ import TransparentButton from "../components/Buttons/TransparentButton";
 import IconInput from "../components/IconInput";
 import ReturnButton from "../components/Buttons/ReturnButton";
 import RoundImageViewer from "../components/RoundImageViewer";
+import {getJwtToken, JWT_CACHE_FILE} from "../Utils";
+import DisableInput from "../components/DisableInput";
+
+async function getProfile(token) {
+    const url = "http://localhost:8080/api/users/profile";
+
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `${token}`,
+            },
+        });
+
+        const data = await response.json();
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+    }
+}
+
 
 export function AccountScreen() {
+
+    const [userInfo, setUserInfo] = useState(null);
+
+    useEffect(() => {
+        getJwtToken((token) => {
+            console.log("Token : "+token)
+
+            const url = "http://localhost:8080/api/users/profile";
+
+            getProfile(token)
+                .then(data => {
+                    console.log(data);
+                    setUserInfo(data);      // mettre a jour donnée utilisateur
+                })
+                .catch(error => {
+                    console.error('Error fetching profile:', error);
+                });
+        });
+    }, []);
+
     return (
         <LinearGradient colors={["#46294F", "#120721"]} style={styles.gradient}>
             <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
@@ -24,42 +66,45 @@ export function AccountScreen() {
                         placeholderImageSource={require("../assets/OIG.jpg")}
                     />
                     <ReturnButton/>
-
-                    <Text style={styles.title}>Information du compte</Text>
                     <View style={{height: 30}}/>
-                    <IconInput
-                        varName={"identifiant"}
-                        label={"Identifiant d'utilisateur"}
-                        isPassword={false}
-                    />
-                    <View style={{height: 15}}/>
-                    <IconInput
-                        varName={"email"}
-                        label={"Adresse mail"}
-                        isPassword={false}
-                    />
-                    <View style={{height: 15}}/>
-                    <IconInput
-                        varName={"nomUtilisateur"}
-                        label={"Nom d'utilisateur"}
-                        isPassword={false}
-                    />
+                    {userInfo && (
+                        <>
+                        <DisableInput
+                            varName="nom"
+                            label={userInfo.nom}
+                            isPassword={false}
+                            disabled={true}
+                        />
+                        <View style={{height: 15}}/>
+                        <DisableInput
+                            varName={"email"}
+                            label={userInfo.email}
+                            isPassword={false}
+                            disabled={true}
+                        />
+                        <View style={{height: 15}}/>
+                        <DisableInput
+                            varName={"nomUtilisateur"}
+                            label={userInfo.nom_affiche}
+                            isPassword={false}
+                            disabled={false}
+                        />
+                        </>
+                        )}
                     <View style={{height: 15}}/>
                     <IconInput
                         varName={"motDePasse"}
-                        label={"Mot de passe"}
+                        label={"Mot de passe actuel"}
                         isPassword={true}
                     />
                     <View style={{height: 15}}/>
                     <IconInput
                         varName={"confirmMotDePasse"}
-                        label={"Confirmer le mot de passe"}
+                        label={"Confirmer le nouveau mot de passe"}
                         isPassword={true}
                     />
                     <View style={{height: 30}}/>
-                    <GreenButton label={"Créer le compte"} link={"/home"}/>
-                    <View style={{height: 10}}/>
-                    <TransparentButton label={"Se connecter"} link={"/login"}/>
+                    <GreenButton label={"Modifier Compte"} link={"/dashboard"}/>
                 </ScrollView>
             </KeyboardAvoidingView>
         </LinearGradient>
@@ -77,10 +122,12 @@ const styles = StyleSheet.create({
         fontSize: 35,
         color: "white",
         marginTop: 20,
+
     },
     container: {
         flexGrow: 1,
         alignItems: "center",
+        justifyContent: "center",
         width: "100%",
     },
     image: {

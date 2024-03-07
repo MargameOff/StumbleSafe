@@ -8,8 +8,8 @@ export default function RoundImageViewer({ placeholderImageSource }) {
 
 const styles = StyleSheet.create({
     image: {
-        width: 100,
-        height: 100,
+        width: 150,
+        height: 150,
         borderRadius: 99,
     },
 });
