@@ -11,6 +11,10 @@ import alertRoutes from './routes/alerts.routes.js';
 import logRoutes from './routes/logs.routes.js';
 import cors from 'cors';
 
+import swaggerUI from 'swagger-ui-express';
+import swaggerSpec from './swagger.js';
+
+
 //Constants
 const APP = express();
 const PORT = 8080;
@@ -44,6 +48,9 @@ APP.use('/api/trips', tripRoutes);
 APP.use('/api/positions', positionRoutes);
 APP.use('/api/alerts', alertRoutes);
 APP.use('/api/logs', logRoutes);
+
+// Integrate Swagger Middleware
+APP.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 APP.get('/status', (req, res) => {
     res.data = {

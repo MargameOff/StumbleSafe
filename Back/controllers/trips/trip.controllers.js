@@ -183,7 +183,7 @@ const getTripInfo = async (req, res) => {
 }
 
 /**
- * Mettre o jour les informations sur le trajet correspondant à l'id 'trip_id'
+ * Mettre a jour les informations sur le trajet correspondant à l'id 'trip_id'
  * Mise a jour seulement si l'utilisateur effectue le trajet, et que son mot de passe est correct
  * Mise a jour seulement si le trajet est "en cours"
  * Données pouvant être mise a jour :

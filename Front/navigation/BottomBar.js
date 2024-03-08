@@ -14,10 +14,10 @@ export default function BottomBar() {
             style={styles.container}
         >
 
-            <TouchableOpacity onPress={() => router.push("login")}>
+            <TouchableOpacity onPress={() => router.push("dashboard")}>
                 <Ionicons name="home-outline" size={32} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("register")}>
+            <TouchableOpacity onPress={() => navigation.navigate("dashboard")}>
                 <View style={styles.subButton}/>
                 <Ionicons name="add-circle" style={styles.button} size={90} color="#50E3A5" />
             </TouchableOpacity>

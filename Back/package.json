@@ -37,6 +37,10 @@
   "devDependencies": {
     "expect.js": "^0.3.1",
     "mocha": "^10.3.0",
-    "supertest": "^6.3.4"
+    "supertest": "^6.3.4",
+    "mongoose-to-swagger": "^1.5.1",
+    "nodemon": "^3.0.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
   }
 }
