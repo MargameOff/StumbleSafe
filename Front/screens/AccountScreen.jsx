@@ -39,13 +39,13 @@ async function getProfile(token) {
 
 export function AccountScreen() {
 
-    const [userInfo, setUserInfo] = useState(null);
+    // Messsage de succès et d'erreur
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const [displayName, setDisplayName] = useState('');
+    // Récupération du profil
+    const [userInfo, setUserInfo] = useState(null);
 
-    // Récupération du profile
     useEffect(() => {
         getJwtToken((token) => {
             console.log("Token : "+token)
@@ -65,50 +65,63 @@ export function AccountScreen() {
 
 
     // Modification du compte utilisateur
-    // const updateProfile = async () =>
-    // {
-    //     const updateRequests = [];
-    //
-    //     if (userInfo.nom_affiche)
-    //     {
-    //         updateRequests.push(fetch("http://localhost:8080/api/users/update/name", {
-    //             method:"PATCH",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization":`{$token}`,
-    //             },
-    //             body: JSON.stringify({
-    //                 nom_affiche:userInfo.nom_affiche
-    //             }),
-    //         }))
-    //     }
-    //
-    //     if (userInfo.newPassword){
-    //         updateRequests.push(fetch("http://localhost:8080/api/users/update/password"), {
-    //             method:"PATCH",
-    //             headers: {
-    //                 "Content-Type":"application/json",
-    //                 "Authorization":`{$token}`
-    //             },
-    //             body: JSON.stringify({
-    //                 password: userInfo.password,
-    //                 newPassword: new_password
-    //             })
-    //         })
-    //     }
-    //
-    //     // Envoie de toute les requetes de modification
-    //     const responses = await Promise.all(updateRequests)
-    //
-    //     // Vérifier les réponses et mettre à jour les messages de succès ou d'erreur
-    //     const successResponses = responses.filter(response => response.ok);
-    //     if (successResponses.length === updateRequests.length) {
-    //         setSuccessMessage('Modifications enregistrées avec succès.');
-    //     } else {
-    //         setErrorMessage('Une erreur est survenue lors de l\'enregistrement des modifications.');
-    //     }
-    //
-    // }
+    const [displayName, setDisplayName] = useState('');
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('')
+
+    const updateProfile = async () =>
+    {
+        let updateRequests = [];
+
+        if (displayName)
+        {
+            console.log("Requete de changement de nom affiché demandé : "+displayName)
+            updateRequests.push(fetch("http://localhost:8080/api/users/update/name", {
+                method:"PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization":`{$token}`,
+                },
+                body: JSON.stringify({
+                    nom_affiche: displayName
+                }),
+            }))
+        }
+
+        if (newPassword){
+            console.log("Requete de changement de mot de passe demandé : oldPwd : "+oldPassword+" et newPwd : "+newPassword)
+            updateRequests.push(fetch("http://localhost:8080/api/users/update/password"), {
+                method:"PATCH",
+                headers: {
+                    "Content-Type":"application/json",
+                    "Authorization":`{$token}`
+                },
+                body: JSON.stringify({
+                    password: oldPassword,
+                    newPassword: newPassword
+                })
+            })
+        }
+
+        // Envoie de toute les requetes de modification
+        console.log("Requetes")
+        updateRequests.forEach(function (item, index, array) {
+            console.log(item, index);
+        });
+        const responses = await Promise.all(updateRequests)
+        console.log("Reponses")
+        responses.forEach(function (item, index, array) {
+            console.log(item, index);
+        });
+        // Vérifier les réponses et mettre à jour les messages de succès ou d'erreur
+        const successResponses = responses.filter(response => response.ok);
+        if (successResponses.length === updateRequests.length) {
+            setSuccessMessage('Modifications enregistrées avec succès.');
+        } else {
+            setErrorMessage('Une erreur est survenue lors de l\'enregistrement des modifications.');
+        }
+
+    }
 
     return (
         <LinearGradient colors={["#46294F", "#120721"]} style={styles.gradient}>
@@ -119,8 +132,8 @@ export function AccountScreen() {
                     />
                     <ReturnButton/>
                     {/* Messages de succès ou d'erreur */}
-                    {successMessage !== '' && <Text>{successMessage}</Text>}
-                    {errorMessage !== '' && <Text>{errorMessage}</Text>}
+                    {successMessage !== '' && <Text style={styles.successText}>{successMessage}</Text>}
+                    {errorMessage !== '' && <Text style={styles.errorText}>{errorMessage}</Text>}
                     <View style={{height: 30}}/>
                     {userInfo && (
                         <>
@@ -144,9 +157,8 @@ export function AccountScreen() {
                         <View style={{height: 15}}/>
                             <ParagraphText text={"Nom affiché"} />
                             <IconInput
-                                value={userInfo.nom_affiche}
-                                placeholder="Nom affiché"
-                                onChangeText={setDisplayName}
+                                value={displayName}
+                                onValueUpdated={(text) => setDisplayName(text)}
                                 isPassword={false}
                                 label={userInfo.nom_affiche}
                             />
@@ -155,18 +167,20 @@ export function AccountScreen() {
                     <ParagraphText text={"Modification Mot de Passe"} />
                     <View style={{height: 15}}/>
                         <IconInput
-                            varName={"motDePasse"}
-                            label={"Mot de passe actuel"}
+                            value={oldPassword}
+                            onValueUpdated={(text) => setOldPassword(text)}
                             isPassword={true}
+                            label={"Ancien mot de passe"}
                         />
                     <View style={{height: 15}}/>
                     <IconInput
-                        varName={"confirmMotDePasse"}
-                        label={"Nouveau mot de passe"}
+                        value={newPassword}
+                        onValueUpdated={(text) => setNewPassword(text)}
                         isPassword={true}
+                        label={"Nouveau mot de passe"}
                     />
                     <View style={{height: 30}}/>
-                    <GreenButton label={"Modifier Compte"} onClick={() => console.log(displayName)} link={"/dashboard"}/>
+                    <GreenButton label={"Modifier Compte"} onPress={updateProfile} link={"/user/account"}/>
                 </ScrollView>
             </KeyboardAvoidingView>
         </LinearGradient>
@@ -198,10 +212,12 @@ const styles = StyleSheet.create({
         marginTop: -50,
         marginBottom: -50,
     },
-    input: {
-        color: '#ababab',
-        marginLeft: 10,
-        fontSize: 15,
-        flex: 1,
+    errorText: {
+        color: "#E35050",
+        textAlign: "center"
+    },
+    successText: {
+        color: "#35bd0e",
+        textAlign: "center"
     }
 });
