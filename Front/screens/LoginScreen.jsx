@@ -17,13 +17,6 @@ export function LoginScreen() {
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
-  // debug pour montrer comment s'en servir
-  useEffect(() => {
-    getJwtToken((val) => {
-      console.log("Token already exists ? => "+val)
-    })
-  }, [])
-
   async function loginClk(event) {
 
     fetch("http://localhost:8080/api/users/login", {

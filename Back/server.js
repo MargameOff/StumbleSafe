@@ -64,3 +64,4 @@ APP.get('*', (req, res) => {
     res.status(404).send('404 Not Found, go check the documentation for the available routes.');
 })
 
+export default APP;

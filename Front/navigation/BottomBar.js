@@ -21,8 +21,8 @@ export default function BottomBar() {
                 <View style={styles.subButton}/>
                 <Ionicons name="add-circle" style={styles.button} size={90} color="#50E3A5" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("groups")}>
-                <Ionicons name="people-outline" size={32} color="white" />
+            <TouchableOpacity onPress={() => navigation.navigate("group/creating")}>
+                <Ionicons name="people" size={32} color="white" />
             </TouchableOpacity>
         </LinearGradient>
     );

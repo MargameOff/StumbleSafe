@@ -9,6 +9,7 @@ import IconInput from "../../components/IconInput";
 import CheckBoxStumble from "../../components/CheckBoxStumble";
 import { router } from "expo-router";
 import { getJwtToken } from "../../Utils";
+import ReturnButton from "../../components/Buttons/ReturnButton";
 
 export function GroupeCreatingScreen() {
 
@@ -62,6 +63,8 @@ export function GroupeCreatingScreen() {
             source={require("../../assets/logo/logo.png")}
             style={styles.image}
           />
+
+          <ReturnButton />
 
           <Text style={styles.title}>Créer un Groupe</Text>
           <View style={{ height: 15 }} />
