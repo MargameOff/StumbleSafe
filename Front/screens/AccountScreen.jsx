@@ -71,56 +71,60 @@ export function AccountScreen() {
 
     const updateProfile = async () =>
     {
-        let updateRequests = [];
+        getJwtToken(async (token) => {
+            if (token) {
+                let updateRequests = [];
 
-        if (displayName)
-        {
-            console.log("Requete de changement de nom affiché demandé : "+displayName)
-            updateRequests.push(fetch("http://localhost:8080/api/users/update/name", {
-                method:"PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization":`{$token}`,
-                },
-                body: JSON.stringify({
-                    nom_affiche: displayName
-                }),
-            }))
-        }
+                if (displayName) {
+                    console.log("Requete de changement de nom affiché demandé : " + displayName)
+                    updateRequests.push(fetch("http://localhost:8080/api/users/update/name", {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `${token}`,
+                        },
+                        body: JSON.stringify({
+                            nom_affiche: displayName
+                        }),
+                    }))
+                }
 
-        if (newPassword){
-            console.log("Requete de changement de mot de passe demandé : oldPwd : "+oldPassword+" et newPwd : "+newPassword)
-            updateRequests.push(fetch("http://localhost:8080/api/users/update/password"), {
-                method:"PATCH",
-                headers: {
-                    "Content-Type":"application/json",
-                    "Authorization":`{$token}`
-                },
-                body: JSON.stringify({
-                    password: oldPassword,
-                    newPassword: newPassword
-                })
-            })
-        }
+                if (newPassword) {
+                    console.log("Requete de changement de mot de passe demandé : oldPwd : " + oldPassword + " et newPwd : " + newPassword)
+                    updateRequests.push(fetch("http://localhost:8080/api/users/update/password", {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `${token}`,
+                        },
+                        body: JSON.stringify({
+                            password: oldPassword,
+                            newPassword: newPassword
+                        })
+                    }))
+                }
 
-        // Envoie de toute les requetes de modification
-        console.log("Requetes")
-        updateRequests.forEach(function (item, index, array) {
-            console.log(item, index);
-        });
-        const responses = await Promise.all(updateRequests)
-        console.log("Reponses")
-        responses.forEach(function (item, index, array) {
-            console.log(item, index);
-        });
-        // Vérifier les réponses et mettre à jour les messages de succès ou d'erreur
-        const successResponses = responses.filter(response => response.ok);
-        if (successResponses.length === updateRequests.length) {
-            setSuccessMessage('Modifications enregistrées avec succès.');
-        } else {
-            setErrorMessage('Une erreur est survenue lors de l\'enregistrement des modifications.');
-        }
-
+                // Envoie de toute les requetes de modification
+                console.log("Requetes")
+                updateRequests.forEach(function (item, index, array) {
+                    console.log(item, index);
+                });
+                const responses = await Promise.all(updateRequests)
+                console.log("Reponses")
+                responses.forEach(function (item, index, array) {
+                    console.log(item, index);
+                });
+                // Vérifier les réponses et mettre à jour les messages de succès ou d'erreur
+                const successResponses = responses.filter(response => response.ok);
+                if (successResponses.length === updateRequests.length) {
+                    setSuccessMessage('Modifications enregistrées avec succès.');
+                } else {
+                    setErrorMessage('Une erreur est survenue lors de l\'enregistrement des modifications.');
+                }
+            } else {
+                console.log("Token d'authentification non trouvé");
+            }
+        })
     }
 
     return (
