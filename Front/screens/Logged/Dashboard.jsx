@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import TitleText from "../../components/TitleText";
 import GroupItem from "../../components/Items/GroupItem";
 import AlertItem from "../../components/Items/AlertItem";
+import Notification from "../../components/Notification";
 
 // TODO
 // DONNEES DE TEST, A REMPLACER PAR LES DONNEES RECUPEREES DE L'API UNE FOIS CELLE-CI IMPLEMENTEE

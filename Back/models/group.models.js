@@ -17,8 +17,9 @@ const groupSchema = new mongoose.Schema({
     },
     membres: [{
         membreId: {
+            field: "_id",
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'User',
         },
         proprietaire: {
             type: Boolean,

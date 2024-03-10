@@ -1,7 +1,7 @@
 import React from 'react'
 import { Text } from 'react-native'
 
-export default function ParagraphText({ text}) {
+export default function ParagraphText({ text }) {
 
     return (
         <>

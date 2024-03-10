@@ -123,7 +123,7 @@ const login = async (req, res) => {
  * 
  */
 const refresh = async (req, res) => {
-    const token = await createJwt(req.user._id);
+    const token = await createJwt(req.user.id);
     res.json({"message": "Le token est actualisé", "token": token}).status(200)
 }
 

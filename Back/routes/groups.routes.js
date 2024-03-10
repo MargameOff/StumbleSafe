@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { create } from '../controllers/users/group.controllers.js';
+import { create, join } from '../controllers/users/group.controllers.js';
 import checkIfUserIsConnected from '../controllers/middlewares/auth.middleware.js';
 
 const router = express.Router();
@@ -16,7 +16,7 @@ let jsonParser = bodyParser.json()
  *     tags:
  *       - Groups
  *     security:
- *       - bearerAuth: []
+ *       - ApiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -71,5 +71,72 @@ let jsonParser = bodyParser.json()
  *         description: Erreur serveur. Impossible de créer le groupe.
  */
 router.post('/create', checkIfUserIsConnected, jsonParser, create)
+
+/**
+ * @swagger
+ * /api/groups/join:
+ *   post:
+ *     summary: Join a groupe with its code
+ *     tags:
+ *       - Groups
+ *     security:
+ *       - ApiKeyAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               groupInfos:
+ *                 type: object
+ *                 properties:
+ *                   code:
+ *                     type: string
+ *                     description: Le code du groupe.
+ *             required:
+ *               - code
+ *     responses:
+ *       '201':
+ *         description: Groupe rejoint.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   description: L'identifiant unique du groupe.
+ *                 nom:
+ *                   type: string
+ *                   description: Le nom du groupe.
+ *                 code:
+ *                   type: string
+ *                   description: Le code d'accès au groupe.
+ *                 actif:
+ *                   type: boolean
+ *                   description: Indique si le groupe est actif ou non.
+ *                 membres:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       membreId:
+ *                         type: string
+ *                         description: L'identifiant unique du membre.
+ *                       proprietaire:
+ *                         type: boolean
+ *                         description: Indique si le membre est propriétaire du groupe ou non.
+ *       '400':
+ *         description: Requête invalide. Veuillez vérifier les données fournies.
+ *       '401':
+ *         description: Non autorisé. L'utilisateur n'est pas connecté.
+ *       '404':
+ *         description: Le code n'est lié à aucun groupe
+ *       '500':
+ *         description: Erreur serveur. Impossible de rejoindre le groupe.
+ */
+router.post('/join', checkIfUserIsConnected, jsonParser, join)
+
 
 export default router;
