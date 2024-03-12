@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Text, KeyboardAvoidingView, ScrollView } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -7,7 +7,8 @@ import GreenButton from "../../components/Buttons/GreenButton";
 import { router } from "expo-router";
 import { getJwtToken } from "../../Utils";
 import ReturnButton from "../../components/Buttons/ReturnButton";
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import * as Location from 'expo-location';
 
 export function CreateTripScreen() {
 
@@ -18,8 +19,36 @@ export function CreateTripScreen() {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+  const mapRef = useRef(null);
 
   const [errorMsg, setErrorMsg] = useState('');
+
+
+  useEffect(() => {
+    (async () => {
+      console.log("111 !!!")
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.log("222 !!!")
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+      console.log("333 !!!")
+
+      let location;
+      try {
+        location = await Location.getCurrentPositionAsync({});
+      } catch(err) {
+        console.log(err)
+      }
+
+      console.log(location)
+      setRegion({
+        "latitude": location.coords.latitude,
+        "longitude": location.coords.longitude
+      })
+    })();
+  }, []);
 
   async function createGroupClk(event) {
 
@@ -54,7 +83,6 @@ export function CreateTripScreen() {
   }
 
   const onMapDrag = (region) => {
-    console.log(region)
     setRegion(region);
   };
 
@@ -70,12 +98,20 @@ export function CreateTripScreen() {
           <View style={{ height: 15 }} />
 
           <MapView
-            region={region}
+            showsUserLocation={true}
+            userLocationUpdateInterval={2000}
             onRegionChange={this.onMapDrag}
             style={styles.map}
             zoomControlEnabled={true}
             zoomEnabled={true}
-          />
+            provider={PROVIDER_GOOGLE}
+          >
+
+              <Marker
+              coordinate={region}
+              title="Your Location"
+              />
+          </MapView>
 
           <View style={{ height: 30 }} />
           <GreenButton label={"Créer"} link={"/group/join"} onPress={createGroupClk} />
