@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { create, join, get, update_group } from '../controllers/users/group.controllers.js';
+import { create, join, get, update_group, quit } from '../controllers/users/group.controllers.js';
 import checkIfUserIsConnected from '../controllers/middlewares/auth.middleware.js';
 
 const router = express.Router();
@@ -195,7 +195,80 @@ router.post('/join', checkIfUserIsConnected, jsonParser, join)
 
 /**
  * @swagger
- * /group-info:
+ * /api/groups/quit:
+ *   post:
+ *     summary: Quitter un groupe
+ *     tags:
+ *       - Groups
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               groupInfos:
+ *                 type: object
+ *                 properties:
+ *                   code:
+ *                     type: string
+ *                     description: Le code du groupe à quitter.
+ *                 required:
+ *                   - code
+ *             required:
+ *               - groupInfos
+ *     responses:
+ *       '200':
+ *         description: L'utilisateur a quitté le groupe avec succès. Seul les membres d'un groupe non propriétaire du groupe peuvent le quitter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   description: L'identifiant unique du groupe.
+ *                 nom:
+ *                   type: string
+ *                   description: Le nom du groupe.
+ *                 code:
+ *                   type: number
+ *                   description: Le code du groupe.
+ *                 actif:
+ *                   type: boolean
+ *                   description: L'état d'activation du groupe.
+ *                 membres:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         description: L'identifiant unique du membre du groupe.
+ *                       nom_affiche:
+ *                         type: string
+ *                         description: Le nom affiché du membre.
+ *                       proprietaire:
+ *                         type: boolean
+ *                         description: Indique si le membre est propriétaire du groupe.
+ *       '400':
+ *         description: Les informations du groupe à quitter sont manquantes.
+ *       '403':
+ *         description: Vous n'avez pas le droit de quitter ce groupe. Les propriétaires de groupe ne peuvent pas quitter leurs groupes. Ils doivent le supprimer
+ *       '404':
+ *         description: Vous ne pouvez pas quitter un groupe auquel vous n'appartenez pas.
+ *       '500':
+ *         description: Erreur serveur. Impossible de quitter le groupe.
+ */
+router.post('/quit', checkIfUserIsConnected, jsonParser, quit)
+
+
+
+/**
+ * @swagger
+ * /api/groups/group-info:
  *   patch:
  *     summary: Mettre à jour les informations d'un groupe, nom du groupe
  *     tags:
