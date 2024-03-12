@@ -52,10 +52,6 @@ const create = async (req, res) => {
 /**
  *
  * Request body :
- * groupInfos: {
- *  nom: string,
- *  code: string
- * }
  *
  * Response body :
  * [
@@ -100,7 +96,10 @@ const get = async (req, res) => {
 /**
  *
  * Request body :
- *
+ * groupInfos: {
+ *  nom: string,
+ *  code: string
+ * }
  * Response body :
  * [
  *     "_id": ObjetID,
@@ -196,6 +195,62 @@ const join = async (req, res) => {
         res.status(500).json({ message: 'Erreur pour rejoindre ce groupe', error: error.message });
     }
 }
+
+/**
+ *
+ * Request body :
+ * groupInfos: {
+ *  code: string
+ * }
+ * Response body :
+ * [
+ *     "_id": ObjetID,
+ *     "nom": String,
+ *     "code": Number,
+ *     "actif": Boolean,
+ *     "membres":
+ *     [
+ *         "_id": ObjetID,
+ *         "nom_affiche": String,
+ *         "proprietaire": Boolean
+ *     ]
+ * ]
+ */
+const quit = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { code } = req.body.groupInfos;
+
+        if(!req.body.groupInfos){
+            return res.status(400).json({ message: 'Les informations du groupe a quitter sont manquantes' });
+        }
+
+        // On récupère le groupe a quitter
+        const group = await getGroupByCodeForUser(userId, code);
+        if (group == null) {
+            return res.status(404).json({ message: 'Vous ne pouvez pas quitter un groupe auquel vous n\'appartenez pas !' });
+        }
+
+        // Vérifier si l'utilisateur est membre non propriétaire du groupe
+        const memberIndex = group.membres.findIndex(member => member._id.toString() === userId && !member.proprietaire);
+        if (memberIndex === -1) {
+            return res.status(403).json({ message: 'Vous n\'avez pas le droit de quitter ce groupe' });
+        }
+
+        // Retirer l'utilisateur de la liste des membres
+        group.membres.splice(memberIndex, 1);
+
+        // Mettre à jour le groupe en base de données
+        await GroupModel.updateOne({ code: code }, { membres: group.membres });
+
+        // Répondre avec le groupe mis à jour
+        res.status(200).json(group);
+    } catch (error) {
+        // Gérer les erreurs
+        res.status(500).json({ message: 'Erreur pour quitter ce groupe', error: error.message });
+    }
+}
+
 
 /**
  * Check if code is not already existed
@@ -295,5 +350,6 @@ export {
     create,
     join,
     get,
-    update_group
+    update_group,
+    quit,
 }
