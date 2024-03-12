@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { create, join, get } from '../controllers/users/group.controllers.js';
+import { create, join, get, update_group } from '../controllers/users/group.controllers.js';
 import checkIfUserIsConnected from '../controllers/middlewares/auth.middleware.js';
 
 const router = express.Router();
@@ -130,7 +130,7 @@ router.get('/', checkIfUserIsConnected, jsonParser, get);
  * @swagger
  * /api/groups/join:
  *   post:
- *     summary: Join a groupe with its code
+ *     summary: Rejoindre un groupe avec le code associé
  *     tags:
  *       - Groups
  *     security:
@@ -193,4 +193,73 @@ router.get('/', checkIfUserIsConnected, jsonParser, get);
 router.post('/join', checkIfUserIsConnected, jsonParser, join)
 
 
+/**
+ * @swagger
+ * /group-info:
+ *   patch:
+ *     summary: Mettre à jour les informations d'un groupe, nom du groupe
+ *     tags:
+ *       - Groups
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               groupInfos:
+ *                 type: object
+ *                 properties:
+ *                   nom:
+ *                     type: string
+ *                     description: Le nouveau nom du groupe.
+ *                   code:
+ *                     type: string
+ *                     description: Le code du groupe à mettre à jour.
+ *                 required:
+ *                   - code
+ *             required:
+ *               - groupInfos
+ *     responses:
+ *       '200':
+ *         description: Les informations du groupe ont été mises à jour avec succès. Tout les membres appartenant au groupe peuvent modifier le nom du groupe.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   description: L'identifiant unique du groupe.
+ *                 nom:
+ *                   type: string
+ *                   description: Le nom mis à jour du groupe.
+ *                 code:
+ *                   type: string
+ *                   description: Le code du groupe.
+ *                 actif:
+ *                   type: boolean
+ *                   description: L'état d'activation du groupe.
+ *                 membres:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         description: L'identifiant unique du membre du groupe.
+ *                       nom_affiche:
+ *                         type: string
+ *                         description: Le nom affiché du membre.
+ *                       proprietaire:
+ *                         type: boolean
+ *                         description: Indique si le membre est propriétaire du groupe.
+ *       '404':
+ *         description: Ce code n'existe pas parmi les groupes auxquels vous appartenez.
+ *       '500':
+ *         description: Erreur serveur. Impossible de mettre à jour les informations du groupe.
+ */
+router.patch('/group-info', checkIfUserIsConnected, jsonParser, update_group);
 export default router;
