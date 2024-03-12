@@ -51,7 +51,11 @@ const create = async (req, res) => {
 
 /**
  *
- * Request body : Not used
+ * Request body :
+ * groupInfos: {
+ *  nom: string,
+ *  code: string
+ * }
  *
  * Response body :
  * [
@@ -92,6 +96,49 @@ const get = async (req, res) => {
         res.status(500).json({ message: 'Erreur lors de la récupération des groupes de l\'utilisateur.', error: error.message });
     }
 }
+
+/**
+ *
+ * Request body :
+ *
+ * Response body :
+ * [
+ *     "_id": ObjetID,
+ *     "nom": String,
+ *     "code": Number,
+ *     "actif": Boolean,
+ *     "membres":
+ *     [
+ *         "_id": ObjetID,
+ *         "nom_affiche": String,
+ *         "proprietaire": Boolean
+ *     ]
+ * ]
+ */
+const update_group = async (req, res) => {
+    try  {
+        const userId = req.user.id;
+        const { code, nom } = req.body.groupInfos; // Assurez-vous que req.body.groupInfos contient les données correctes
+        // On récupère le groupe
+        const group = await getGroupByCodeForUser(userId, code);
+        if (group == null) {
+            return res.status(404).json({ message: 'Ce code n\'existe pas parmis les groupes auquels vous appartenez !' });
+        }
+
+        // Modification du groupe : modification du nom
+        console.log("Groupe trouvé")
+        if (nom)
+        {
+            group.nom = nom
+            await group.save();      // Sauvegarder en BD
+        }
+        res.status(200).json(group);
+
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération du groupes de l\'utilisateur. Le code fourni ne correspond pas a un groupe où il l\'utilisateur appartient', error: error.message });
+    }
+}
+
 
 /**
  * 
@@ -207,8 +254,46 @@ const getUserGroup = async (userId) =>
     });
 
 
+/**
+ * Retrive group corresponding to code where userId is a member
+ * @param userId
+ * @param code
+ * @returns GroupModel[]
+ */
+const getGroupByCodeForUser = async (userId, code) => {
+    try {
+        // Rechercher le groupe par son code
+        const group = await GroupModel.findOne({ code: code });
+
+        // Vérifier si le groupe a été trouvé
+        if (!group) {
+            console.log("Groupe introuvable : aucun code correspondant")
+            return null; // Groupe non trouvé
+        }
+
+        // Vérifier si l'utilisateur est membre de ce groupe
+        console.log(userId)
+        for (let membre of group.membres) {
+            const userGroup = await UserModel.findById(membre._id);
+            console.log(userGroup._id)
+            if (userGroup._id == userId){
+                // Si l'utilisateur appartient bel et bien au groupe
+                console.log("L'utilisateur appartient a ce groupe")
+                return group;
+            }
+        }
+        console.log("L'utilisateur n'appartient pas a ce groupe")
+        return null;        // Groupe non trouvé
+
+    } catch (error) {
+        throw new Error('Erreur lors de la recherche du groupe par code pour l\'utilisateur: ' + error.message);
+    }
+}
+
+
 export {
     create,
     join,
-    get
+    get,
+    update_group
 }
