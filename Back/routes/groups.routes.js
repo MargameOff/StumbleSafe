@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { create, join, get, update_group, quit } from '../controllers/users/group.controllers.js';
+import {create, join, get, update_group, quit, delete_group} from '../controllers/users/group.controllers.js';
 import checkIfUserIsConnected from '../controllers/middlewares/auth.middleware.js';
 
 const router = express.Router();
@@ -335,4 +335,52 @@ router.post('/quit', checkIfUserIsConnected, jsonParser, quit)
  *         description: Erreur serveur. Impossible de mettre à jour les informations du groupe.
  */
 router.patch('/group-info', checkIfUserIsConnected, jsonParser, update_group);
+
+/**
+ * @swagger
+ * /api/groups/delete:
+ *   delete:
+ *     summary: Supprimer un groupe
+ *     tags:
+ *       - Groups
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               groupInfos:
+ *                 type: object
+ *                 properties:
+ *                   code:
+ *                     type: string
+ *                     description: Le code du groupe à supprimer.
+ *                 required:
+ *                   - code
+ *             required:
+ *               - groupInfos
+ *     responses:
+ *       '200':
+ *         description: Le groupe a été supprimé avec succès. Seul le propriétaire du groupe peut supprimer le groupe. Le groupe n'apparaitera plus pour les membres
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Message de confirmation indiquant que le groupe a été supprimé.
+ *       '400':
+ *         description: Les informations du groupe à supprimer sont manquantes.
+ *       '403':
+ *         description: Vous n'avez pas le droit de supprimer ce groupe. Vous devez être son propriétaire pour le pouvoir.
+ *       '404':
+ *         description: Vous ne pouvez pas supprimer un groupe auquel vous n'appartenez pas.
+ *       '500':
+ *         description: Erreur serveur. Impossible de supprimer le groupe.
+ */
+router.delete('/delete', checkIfUserIsConnected, jsonParser, delete_group);
 export default router;
