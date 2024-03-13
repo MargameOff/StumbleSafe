@@ -52,6 +52,59 @@ const create = async (req, res) => {
 /**
  *
  * Request body :
+ * groupInfos: {
+ *  code: string
+ * }
+ * Response body :
+ * [
+ *     "_id": ObjetID,
+ *     "nom": String,
+ *     "code": Number,
+ *     "actif": Boolean,
+ *     "membres":
+ *     [
+ *         "_id": ObjetID,
+ *         "nom_affiche": String,
+ *         "proprietaire": Boolean
+ *     ]
+ * ]
+ */
+const delete_group = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { code } = req.body.groupInfos;
+
+        if(!req.body.groupInfos){
+            return res.status(400).json({ message: 'Les informations du groupe a supprimer sont manquantes' });
+        }
+
+        // On récupère le groupe a supprimer
+        const group = await getGroupByCodeForUser(userId, code);
+        if (group == null) {
+            return res.status(404).json({ message: 'Vous ne pouvez pas supprimer un groupe auquel vous n\'appartenez pas !' });
+        }
+
+        // Vérifier si l'utilisateur est membre propriétaire du groupe
+        const memberIndex = group.membres.findIndex(member => member._id.toString() === userId && member.proprietaire);
+        if (memberIndex === -1) {
+            return res.status(403).json({ message: 'Vous n\'avez pas le droit de supprimer ce groupe. Vous devez être son propriétaire pour le pouvoir' });
+        }
+
+        // Supprimer le groupe de la base de données
+        await GroupModel.deleteOne({ code: code });
+
+        // Répondre avec un message de succès
+        res.status(200).json({ message: 'Le groupe a été supprimé avec succès' });
+
+    } catch (error) {
+        // Gérer les erreurs
+        res.status(500).json({ message: 'Erreur pour quitter ce groupe', error: error.message });
+    }
+}
+
+/**
+ *
+ * Request body :
  *
  * Response body :
  * [
@@ -352,4 +405,5 @@ export {
     get,
     update_group,
     quit,
+    delete_group,
 }
