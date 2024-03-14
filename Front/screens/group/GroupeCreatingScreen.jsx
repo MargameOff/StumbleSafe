@@ -39,16 +39,19 @@ export function GroupeCreatingScreen() {
         }),
         }).then(async (res) => {
           const data = await res.json();
-          if(res.status == 200) return data;
+          if(res.status == 201){
+            console.log('Group created');
+            router.replace('/dashboard');
+            return data;
+          }
+          console.log('Group not created');
           return Promise.reject(data);
-        })
-        .then((data) => {
-          router.replace('/dashboard');
         }).catch((err) => {
           setErrorMsg(err.message)
         });
       } else {
         router.replace('/login');
+        console.log('Token not found');
       }
     
     })
