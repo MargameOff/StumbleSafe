@@ -53,10 +53,7 @@ APP.use('/api/logs', logRoutes);
 APP.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 APP.get('/status', (req, res) => {
-    res.data = {
-        status: 'ok'
-    }
-    res.json(res.data);
+    res.status(200).send('ok')
 })
 
 //all other routes
