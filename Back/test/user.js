@@ -15,7 +15,7 @@ var savedToken = "";
 
 // Test que le serveur est bien démarré
 describe('Tests de l\'API', () => {
-    it('Devrait retourner une réponse de statut 200 user', done => {
+    it('Devrait retourner une réponse de statut 200', done => {
         request(APP)
             .get('/status')
             .expect(200)
