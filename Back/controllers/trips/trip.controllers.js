@@ -474,27 +474,40 @@ const terminateTrip = async (req, res) => {
 
 const getTrips = async (req, res) => {
     try {
-        //si la requête ne contient pas de groupeId, on renvoie tous les trajets des membres des groupes de l'utilisateur
-        if (!req.body.groupId) {
-            const userId = req.user.id;
-            const user = await UserModel.findById(userId);
-            const groupIds = user.groupes;
-            const trips = await TripModel.find({groupes: {$in: groupIds}});
-            res.status(200).json(trips);
+        const userId = req.user.id;
+        const groups = await GroupModel.find({
+            membres: {
+                $elemMatch: {
+                    _id: userId
+                }
+            }
+        });
+        const trips = await TripModel.find({groupes: {$in: groups}});
+        const extendedTrips = [];
+        for (let trip of trips) {
+            const user = await UserModel.findById(trip.utilisateur);
+            if (!user) {
+                res.status(404).json({ message: `Impossible de trouver l'utilisateur d'ID ${user._id}.` });
+            }
+            extendedTrips.push({
+                _id: trip._id,
+                nom: trip.nom,
+                statut: trip.statut,
+                utilisateur: trip.utilisateur,
+                nom_utilisateur: user.nom_affiche,
+                groupes: trip.groupe,
+                depart: trip.depart,
+                arrivee: trip.arrivee,
+                date_depart: trip.date_depart,
+                date_arrivee_estimee: trip.date_arrivee_estimee
+            });
         }
-        //sinon on renvoie tous les trajets du groupe
-        else {
-            const groupId = req.body.groupId;
-            const trips = await TripModel.find({groupes: groupId, statut: "en cours"});
-            res.status(200).json(trips);
-        }
+        res.status(200).json(extendedTrips);
     } catch (error) {
         res.status(500).json({ message: 'Erreur lors de la récupération des trajets', error: error.message });
     }
         
 }
-
-
 
 const checkNameValidity = (name) => {
     if (!name) {

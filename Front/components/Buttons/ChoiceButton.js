@@ -5,7 +5,7 @@ import { Text } from 'react-native'
 
 export default function ChoiceButton({iconName, text, redirectTo}) {
     return (
-        <TouchableOpacity onPress={() => router.push(redirectTo)}>
+        <TouchableOpacity onPress={() => router.push(redirectTo)} style={styles.item}>
           <View style={styles.container}>
             <View>
                 <View style={styles.button}>
@@ -23,16 +23,15 @@ export default function ChoiceButton({iconName, text, redirectTo}) {
 // On définit les styles du composant
 const styles = StyleSheet.create({
     container: {
-      position: 'absolute',
+      flex: 1,
       alignSelf: 'flex-start',
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: "center",
       textAlignVertical: "center",
-      borderRadius: 56
+      borderRadius: 56,
     },
     button: {
-      backgroundColor: '#2F1E45',
       borderRadius: 50, // On rend le bouton rond en utilisant un grand rayon
       padding: 16,
     },
@@ -41,6 +40,14 @@ const styles = StyleSheet.create({
       height: "100%",
       fontFamily: "Montserrat_Bold",
       color: "#fff"
-    }
+    },
+    item: {
+        height: 60,
+        borderColor: "#3BD0AC",
+        borderWidth: 1,
+        backgroundColor: "#2F1E45",
+        borderRadius: 56,
+        marginHorizontal: 20
+    },
   });
   

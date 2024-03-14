@@ -510,7 +510,7 @@ router.patch('/terminate', checkIfUserIsConnected, jsonParser, terminateTrip);
  */
 router.patch('/cancel', checkIfUserIsConnected, jsonParser, cancelTrip);
 
-/*
+/**
  * @swagger
     * /api/trips/getTrips:
     *  get:
@@ -537,4 +537,5 @@ router.patch('/cancel', checkIfUserIsConnected, jsonParser, cancelTrip);
     * description: Erreur serveur. Impossible de récupérer les trajets de l'utilisateur.
     */
 router.get('/getTrips', checkIfUserIsConnected, jsonParser, getTrips);
+
 export default router;
