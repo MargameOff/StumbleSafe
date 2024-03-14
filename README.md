@@ -36,8 +36,17 @@ You can modify the .env file to change the database configuration.
 ### Installation des dépendances
 ```npm i```
 
-### A jouer une fois
+### A jouer a chaque lancement de l'émulateur (pour avoir accès au localhost)
 ```adb -s emulator-5554 reverse tcp:8080 tcp:8080```
 
 ### Start in Dev
 ```npx expo start```
+
+
+## Documentation
+
+Pour avoir accès a la documentation de l'API (Swagger)  
+
+```http://localhost:8080/api-docs/```  
+
+Il faut bien penser à lancer le serveur de Back

@@ -93,8 +93,6 @@ const login = async (req, res) => {
     // Connexion à la base de données
     // await connectDB();   
     try {
-        // Récupérer les données de l'utilisateur à partir du corps de la requête
-        console.log(req.body.userInfos);
         // Vérifier si l'utilisateur existe déjà dans la base de données
         const { nom, password } = req.body.userInfos; // Assurez-vous que req.body.userInfos contient les données correctes
         const user = await UserModel.findOne({ nom });
@@ -123,7 +121,7 @@ const login = async (req, res) => {
  * 
  */
 const refresh = async (req, res) => {
-    const token = await createJwt(req.user._id);
+    const token = await createJwt(req.user.id);
     res.json({"message": "Le token est actualisé", "token": token}).status(200)
 }
 

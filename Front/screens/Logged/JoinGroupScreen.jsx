@@ -4,16 +4,14 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { vw, vh } from "react-native-expo-viewport-units";
 import GreenButton from "../../components/Buttons/GreenButton";
-import TransparentButton from "../../components/Buttons/TransparentButton";
-import IconInput from "../../components/IconInput";
 import CheckBoxStumble from "../../components/CheckBoxStumble";
 import { router } from "expo-router";
 import { getJwtToken } from "../../Utils";
 import ReturnButton from "../../components/Buttons/ReturnButton";
+import SmoothPinCodeInput from "react-native-smooth-pincode-input";
+export function JoinGroupScreen() {
 
-export function GroupeCreatingScreen() {
-
-  const [namegroup, setNameGroup] = useState("");
+  const [code, setCode] = useState('');
   const [isAgree, setAgree] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -26,7 +24,7 @@ export function GroupeCreatingScreen() {
 
     getJwtToken((token) => { 
       if(token != null) { // if token is null (never happen theoretically)
-        fetch("http://localhost:8080/api/groups/create", {
+        fetch("http://localhost:8080/api/groups/join", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -34,7 +32,7 @@ export function GroupeCreatingScreen() {
           },
           body: JSON.stringify({
             "groupInfos": {
-                "nom": namegroup,
+                "code": code,
             }
         }),
         }).then(async (res) => {
@@ -66,15 +64,25 @@ export function GroupeCreatingScreen() {
 
           <ReturnButton />
 
-          <Text style={styles.title}>Créer un Groupe</Text>
+          <Text style={styles.title}>Rejoindre un Groupe</Text>
           <View style={{ height: 15 }} />
           <Text style={{...styles.buttonText, ...styles.errorText}}>{errorMsg}</Text>
           <View style={{ height: 15 }} />
-          <IconInput value={namegroup} onValueUpdated={(text) => setNameGroup(text)} label={"Nom du groupe"} isPassword={false}/>
+
+          <SmoothPinCodeInput
+          codeLength={6}
+          value={code}
+          restrictToNumbers={true}
+          cellStyleFocused={{
+            borderColor: '#50E3A5',
+          }}
+          onTextChange={code => setCode(code)}
+          />
+
           <View style={{ height: 30 }} />
           <CheckBoxStumble text="J'accepte de partager ma position avec les membres de ce groupe" isChecked={isAgree} onChecked={setAgree}></CheckBoxStumble>
           <View style={{ height: 30 }} />
-          <GreenButton label={"Confirmer"} link={"/group/creating"} onPress={createGroupClk} />
+          <GreenButton label={"Rejoindre"} link={"/group/join"} onPress={createGroupClk} />
           <View style={{ height: 10 }} />
         </LinearGradient>
       </ScrollView>
