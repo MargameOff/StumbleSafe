@@ -472,6 +472,27 @@ const terminateTrip = async (req, res) => {
     }
 }
 
+const getTrips = async (req, res) => {
+    try {
+        //si la requête ne contient pas de groupeId, on renvoie tous les trajets des membres des groupes de l'utilisateur
+        if (!req.body.groupId) {
+            const userId = req.user.id;
+            const user = await UserModel.findById(userId);
+            const groupIds = user.groupes;
+            const trips = await TripModel.find({groupes: {$in: groupIds}});
+            res.status(200).json(trips);
+        }
+        //sinon on renvoie tous les trajets du groupe
+        else {
+            const groupId = req.body.groupId;
+            const trips = await TripModel.find({groupes: groupId, statut: "en cours"});
+            res.status(200).json(trips);
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération des trajets', error: error.message });
+    }
+        
+}
 
 
 
@@ -544,4 +565,4 @@ const checkIfUserIsInGroups = async (groupIds, userId) => {
     }
 }
 
-export { create, getTripInfo, updateTrip, cancelTrip, terminateTrip}
+export { create, getTripInfo, updateTrip, cancelTrip, terminateTrip, getTrips}

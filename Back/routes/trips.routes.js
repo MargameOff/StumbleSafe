@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import checkIfUserIsConnected from "../controllers/middlewares/auth.middleware.js";
-import {cancelTrip, create, getTripInfo, terminateTrip, updateTrip} from "../controllers/trips/trip.controllers.js";
+import { cancelTrip, create, getTripInfo, getTrips, terminateTrip, updateTrip } from "../controllers/trips/trip.controllers.js";
 
 const router = express.Router();
 let jsonParser = bodyParser.json();
@@ -509,4 +509,32 @@ router.patch('/terminate', checkIfUserIsConnected, jsonParser, terminateTrip);
  *         description: Erreur serveur. Impossible d'annuler le trajet.
  */
 router.patch('/cancel', checkIfUserIsConnected, jsonParser, cancelTrip);
+
+/*
+ * @swagger
+    * /api/trips/getTrips:
+    *  get:
+    *   summary: Récupérer les trajets de l'utilisateur
+    *  tags:
+    *   - Trajets
+    * security:
+    *  - bearerAuth: []
+    * requestBody:
+        * required: false
+            * content:
+                * application/json:
+                *  groupIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Les identifiants uniques des groupes associés au trajet.
+    * responses:
+    *  '200':
+    *  description: Succès de la requête. Retourne les trajets de l'utilisateur.
+    * '401':
+    * description: Non autorisé. L'utilisateur n'est pas connecté.
+    * '500':
+    * description: Erreur serveur. Impossible de récupérer les trajets de l'utilisateur.
+    */
+router.get('/getTrips', checkIfUserIsConnected, jsonParser, getTrips);
 export default router;
