@@ -37,7 +37,7 @@ export function JoinGroupScreen() {
         }),
         }).then(async (res) => {
           const data = await res.json();
-          if(res.status == 200) return data;
+          if(res.status == 201) return data;
           return Promise.reject(data);
         })
         .then((data) => {
