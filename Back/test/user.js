@@ -12,9 +12,6 @@ const settings = {
 
 var savedToken = "";
 
-before(async () => {
-    await UserModel.deleteOne({ email: settings.email });
-});
 
 // Test que le serveur est bien démarré
 describe('Tests de l\'API', () => {
@@ -22,9 +19,8 @@ describe('Tests de l\'API', () => {
         request(APP)
             .get('/status')
             .expect(200)
-            .end((err, res) => {
+            .end(async (err, res) => {
                 if (err) return done(err);
-                // Vérifiez votre réponse ici
                 done();
             });
     });
@@ -177,8 +173,7 @@ describe('Routes of the USERS', () => {
 });
 
 // lance apres les tests
-after(() => {
-    UserModel.deleteOne({email: settings.email})
-    process.exit(0);
+after(async () => {
+    await UserModel.deleteOne({email: "test@sfr.fr"})
 });
 

@@ -304,6 +304,5 @@ describe('DELETE /api/groups/delete', () => {
 });
 
 after(async () => {
-    // await GroupModel.deleteOne({ code: groupInfosTmp.code });
-    process.exit(0);
+    await UserModel.deleteOne({ email: "banana@sosh.fr"});
 });
