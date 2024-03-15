@@ -101,7 +101,7 @@ const login = async (req, res) => {
             const isValidPassword = await bcrypt.compare(password, user.password);
             if (isValidPassword) {
                 const token = await createJwt(user._id)
-                return res.status(400).json({ message: 'Connexion réussie', token: token });
+                return res.status(200).json({ message: 'Connexion réussie', token: token });
             }
         }
 
