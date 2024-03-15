@@ -62,17 +62,12 @@ export function CreateTripScreen() {
       return;
     }
 
-      console.log(arrive)
     setErrorMsg("")
     setGroupSelection(true);
   }
   
   const onGroupSelected = (selectedGroups) => {
-    console.log("onGroupSelected 1")
     getJwtToken(async (token) => { 
-      console.log("onGroupSelected 2")
-      console.log(selectedGroups)
-
       if(token != null) { // if token is null (never happen theoretically)
         var location;
         try {
@@ -109,9 +104,8 @@ export function CreateTripScreen() {
             setErrorMsg(err.message)
           });
         } catch(err) {
-          console.log(err)
+          setErrorMsg(err.message)
         }
-        console.log("onGroupSelected 4")
       } else {
         router.replace('/login');
       }

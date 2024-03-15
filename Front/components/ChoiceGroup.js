@@ -50,7 +50,6 @@ export default function ChoiceGroup({ isVisible, onValidate, onPressClose }) {
   const onSelectGroup = (item) => {     
     if(selectedGroupIds.includes(item.id)) {
       let newSelectedGroups = [...selectedGroupIds];
-      operation = "deleting";
       for (let i = 0; i < newSelectedGroups.length; i++) { 
         if (newSelectedGroups[i] === item.id) { 
           newSelectedGroups.splice(i, 1);
@@ -58,7 +57,6 @@ export default function ChoiceGroup({ isVisible, onValidate, onPressClose }) {
       }
       setSelectedGroupIds(newSelectedGroups);
     } else {
-      operation = "adding";
       setSelectedGroupIds([...selectedGroupIds, item.id]);
     }
   }
@@ -122,7 +120,6 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       height: 'auto',
       width: '100%',
-     // backgroundColor: '#25292e',
       justifyContent: 'center',
       alignSelf: "center"
     },
