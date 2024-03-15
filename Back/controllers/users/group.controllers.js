@@ -77,6 +77,11 @@ const delete_group = async (req, res) => {
         if(!req.body.groupInfos){
             return res.status(400).json({ message: 'Les informations du groupe a supprimer sont manquantes' });
         }
+        
+        // Vérifier si le code du groupe est bien fourni
+        if (!code) {
+            return res.status(400).json({ message: 'Le code du groupe est manquant' });
+        }
 
         // On récupère le groupe a supprimer
         const group = await getGroupByCodeForUser(userId, code);
@@ -178,7 +183,6 @@ const update_group = async (req, res) => {
         }
 
         // Modification du groupe : modification du nom
-        console.log("Groupe trouvé")
         if (nom)
         {
             group.nom = nom
@@ -375,22 +379,17 @@ const getGroupByCodeForUser = async (userId, code) => {
 
         // Vérifier si le groupe a été trouvé
         if (!group) {
-            console.log("Groupe introuvable : aucun code correspondant")
             return null; // Groupe non trouvé
         }
 
         // Vérifier si l'utilisateur est membre de ce groupe
-        console.log(userId)
         for (let membre of group.membres) {
             const userGroup = await UserModel.findById(membre._id);
-            console.log(userGroup._id)
             if (userGroup._id == userId){
                 // Si l'utilisateur appartient bel et bien au groupe
-                console.log("L'utilisateur appartient a ce groupe")
                 return group;
             }
         }
-        console.log("L'utilisateur n'appartient pas a ce groupe")
         return null;        // Groupe non trouvé
 
     } catch (error) {

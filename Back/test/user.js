@@ -12,6 +12,9 @@ const settings = {
 
 var savedToken = "";
 
+before(async () => {
+    await UserModel.deleteOne({ email: settings.email });
+});
 
 // Test que le serveur est bien démarré
 describe('Tests de l\'API', () => {
@@ -172,9 +175,10 @@ describe('Routes of the USERS', () => {
         });
     });
 });
+
 // lance apres les tests
-after(async function() {
-    await UserModel.deleteOne({email: settings.email})
+after(() => {
+    UserModel.deleteOne({email: settings.email})
     process.exit(0);
 });
 
