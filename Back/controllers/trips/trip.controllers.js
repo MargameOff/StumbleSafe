@@ -13,7 +13,7 @@ import UserModel from "../../models/user.models.js";
  * Request Body :
  * {
  *    name: String,
- *    groupeIds: ObjectID[]
+ *    groupIds: ObjectID[]
  *    startLocation: {
  *        latitude: Number
  *        longitude: Number
@@ -499,10 +499,10 @@ const checkLocationsValidity = (location, nameOfLocation) => {
         throw new RequestParsingError(400, `Le ${nameOfLocation} est manquant.`);
     }
     if (!location.latitude) {
-        throw new RequestParsingError(400, `La latitude du ${nameOfLocation} est manquant.`);
+        throw new RequestParsingError(400, `La latitude du ${nameOfLocation} est manquante.`);
     }
     if (!location.longitude) {
-        throw new RequestParsingError(400, `La longitude du ${nameOfLocation} est manquant.`);
+        throw new RequestParsingError(400, `La longitude du ${nameOfLocation} est manquante.`);
     }
 };
 
@@ -534,7 +534,7 @@ const checkIfUserIsInGroups = async (groupIds, userId) => {
                 _id: groupId,
                 membres: {
                     $elemMatch: {
-                        membreId: userId
+                        _id: userId
                     }
                 }
             });

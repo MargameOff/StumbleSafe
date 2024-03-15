@@ -53,7 +53,7 @@ export function Dashboard() {
   const getGroups = async () => {
     getJwtToken((token) => {
       if(token != null) {
-        fetch("http://localhost:8080/api/groups/", {
+        fetch("http://localhost80/api/groups/", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, ScrollView } from "react-native";
+import { View, StyleSheet, Text, ScrollView, KeyboardAvoidingView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -8,6 +8,10 @@ import ReturnButton from "../../../components/Buttons/ReturnButton";
 import DateButton from "../../../components/Buttons/DateButton";
 import GreenButton from "../../../components/Buttons/GreenButton";
 import ChoiceGroup from "../../../components/ChoiceGroup";
+import IconInput from "../../../components/IconInput";
+import TransparentButton from "../../../components/Buttons/TransparentButton";
+import { getJwtToken } from "../../../Utils";
+import { router } from "expo-router";
 
 export function CreateTripScreen() {
 
@@ -18,6 +22,8 @@ export function CreateTripScreen() {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+
+  const [tripName, setTripName] = useState(null);
   // Coordinate of the trip's end
   const [arrive, setArrive] = useState(null);
   
@@ -35,23 +41,16 @@ export function CreateTripScreen() {
         setErrorMsg('Permission to access location was denied');
         return;
       }
-
-      let location;
-      try {
-        location = await Location.getCurrentPositionAsync({});
-      } catch(err) {
-        console.log(err)
-      }
-
-      console.log(location)
-      setRegion({
-        "latitude": location.coords.latitude,
-        "longitude": location.coords.longitude
-      })
     })();
   }, []);
 
-  async function createTripClk(event) {
+  async function selectGroups(event) {
+
+    if(tripName == null) {
+      setErrorMsg("Donner un nom à votre trajet")
+      return;
+    }
+
     if(arrive == null) {
       setErrorMsg("Séléctionner le lieu d'arrivée sur la map")
       return;
@@ -62,35 +61,63 @@ export function CreateTripScreen() {
       setErrorMsg("Vous devez séléctionner une date future !")
       return;
     }
+
+      console.log(arrive)
+    setErrorMsg("")
     setGroupSelection(true);
-    /*getJwtToken((token) => { 
+  }
+  
+  const onGroupSelected = (selectedGroups) => {
+    console.log("onGroupSelected 1")
+    getJwtToken(async (token) => { 
+      console.log("onGroupSelected 2")
+      console.log(selectedGroups)
+
       if(token != null) { // if token is null (never happen theoretically)
-        fetch("http://localhost:8080/api/groups/join", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": token
-          },
-          body: JSON.stringify({
-            "groupInfos": {
-                "code": code,
-            }
-        }),
-        }).then(async (res) => {
-          const data = await res.json();
-          if(res.status == 200) return data;
-          return Promise.reject(data);
-        })
-        .then((data) => {
-          router.replace('/dashboard');
-        }).catch((err) => {
-          setErrorMsg(err.message)
-        });
+        var location;
+        try {
+          location = await Location.getCurrentPositionAsync({});
+          let estimatedArrive = new Date(dateArrive.getFullYear(), dateArrive.getMonth(), dateArrive.getDate(), timeArrive.getHours(), timeArrive.getMinutes()); 
+
+          fetch("http://localhost:8080/api/trips/create", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": token
+            },
+            body: JSON.stringify({
+              "name": tripName,
+              "groupIds": selectedGroups,
+              "startLocation": {
+                "latitude": location.coords.latitude,
+                "longitude": location.coords.longitude
+              },
+              "finishLocation": {
+                "latitude": arrive.latitude,
+                "longitude": arrive.longitude
+              },
+              "estimatedTime": estimatedArrive
+          }),
+          }).then(async (res) => {
+            const data = await res.json();
+            if(res.status == 201) return data;
+            return Promise.reject(data);
+          })
+          .then((data) => {
+            router.replace('/dashboard');
+          }).catch((err) => {
+            setErrorMsg(err.message)
+          });
+        } catch(err) {
+          console.log(err)
+        }
+        console.log("onGroupSelected 4")
       } else {
         router.replace('/login');
       }
+      setGroupSelection(false)
     
-    }) */
+    })
   }
 
   const onMapDrag = (region) => {
@@ -128,63 +155,70 @@ export function CreateTripScreen() {
   };
 
   return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <LinearGradient colors={["#46294F", "#120721"]} style={styles.gradient}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
+        <ScrollView contentContainerStyle={styles.container}>
+          <LinearGradient colors={["#46294F", "#120721"]} style={styles.gradient}>
 
-          <ReturnButton />
-          <Text style={styles.title}>Nouveau Trajet</Text>
-          <View style={{ height: 15 }} />
+              <Text style={styles.title}>Nouveau Trajet</Text>
+              <View style={{ height: 15 }} />
 
-          <Text style={styles.text}>Séléctionner sur la map le lieu d'arrivée</Text>
+              <IconInput value={tripName} onValueUpdated={(text) => setTripName(text)} label={"Nom du trajet"} isPassword={false}/>
+              <View style={{ height: 15 }} />
 
-          <View style={{ height: 15 }} />
-          <Text style={{...styles.buttonText, ...styles.errorText}}>{errorMsg}</Text>
-          <View style={{ height: 15 }} />
 
-          <MapView
-            showsUserLocation={true}
-            userLocationUpdateInterval={10000}
-            onRegionChange={onMapDrag}
-            onPress={onPress}
-            style={styles.map}
-            zoomControlEnabled={true}
-            zoomEnabled={true}
-            provider={PROVIDER_GOOGLE}
-          >
+              <Text style={styles.text}>Séléctionner sur la map le lieu d'arrivée</Text>
 
-              { arrive != null ? 
-              <View>
-                <Marker
-                coordinate={arrive}
-                title="Point d'arrivée"
-                />
+              <View style={{ height: 15 }} />
+              <Text style={{...styles.buttonText, ...styles.errorText}}>{errorMsg}</Text>
+              <View style={{ height: 15 }} />
+
+              <MapView
+                showsUserLocation={true}
+                userLocationUpdateInterval={10000}
+                onRegionChange={onMapDrag}
+                onPress={onPress}
+                style={styles.map}
+                zoomControlEnabled={true}
+                zoomEnabled={true}
+                provider={PROVIDER_GOOGLE}
+              >
+
+                  { arrive != null ? 
+                  <View>
+                    <Marker
+                    coordinate={arrive}
+                    title="Point d'arrivée"
+                    />
+                  </View>
+                  : <View></View> }
+
+              </MapView>
+
+              <View style={{ height: 15 }} />
+              <Text style={styles.text}>Séléctionner estimation de l'arrivée</Text>
+
+              <View style={{flex: 1, flexDirection: "row", justifyContent: "center"}}>
+                <DateButton value={dateArrive} show="date" onPress={showDatePicker} />
+                <View style={{width: 20}} />
+                <DateButton value={timeArrive} show="time" onPress={showTimePicker} />
               </View>
-              : <View></View> }
 
-          </MapView>
+              <View style={{ height: 10 }} />
+              <GreenButton label={"Créer"} link={"/user/createtrip"} onPress={selectGroups} />
+              <TransparentButton label={"Annuler"} link={"/dashboard"} />
 
-          <View style={{ height: 15 }} />
-          <Text style={styles.text}>Séléctionner estimation de l'arrivée</Text>
+          </LinearGradient>
 
-          <View style={{flex: 1, flexDirection: "row", justifyContent: "center"}}>
-            <DateButton value={dateArrive} show="date" onPress={showDatePicker} />
-            <View style={{width: 20}} />
-            <DateButton value={timeArrive} show="time" onPress={showTimePicker} />
-          </View>
-
-          <View style={{ height: 15 }} />
-          <GreenButton label={"Créer"} link={"/user/createtrip"} onPress={createTripClk} />
-          <View style={{ height: 10 }} />
-
-
-        </LinearGradient>
-
+        </ScrollView>
         { groupSelection ? 
-        <View style={{ flex: 1 }}>
-          <ChoiceGroup isVisible={groupSelection} onPress={() => {}} />
+        <View style={{position: "absolute"}}>
+          <ChoiceGroup isVisible={groupSelection} 
+          onValidate={onGroupSelected} 
+          onPressClose={() => setGroupSelection(false)} 
+          />
         </View>
         : <View></View> }
-      </ScrollView>
+      </KeyboardAvoidingView>
   );
 }
 
@@ -223,8 +257,8 @@ const styles = StyleSheet.create({
   },
   map: {
     minWidth: 300,
-    minHeight: 400,
+    minHeight: 300,
     width: "90%",
-    height: "50%"
+    height: "30%"
   }
 });
