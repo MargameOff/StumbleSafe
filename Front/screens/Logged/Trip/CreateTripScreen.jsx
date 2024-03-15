@@ -7,6 +7,7 @@ import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import ReturnButton from "../../../components/Buttons/ReturnButton";
 import DateButton from "../../../components/Buttons/DateButton";
 import GreenButton from "../../../components/Buttons/GreenButton";
+import ChoiceGroup from "../../../components/ChoiceGroup";
 
 export function CreateTripScreen() {
 
@@ -25,6 +26,7 @@ export function CreateTripScreen() {
 
   const [errorMsg, setErrorMsg] = useState('');
 
+  const [groupSelection, setGroupSelection] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -60,7 +62,7 @@ export function CreateTripScreen() {
       setErrorMsg("Vous devez séléctionner une date future !")
       return;
     }
-    console.log("ok")
+    setGroupSelection(true);
     /*getJwtToken((token) => { 
       if(token != null) { // if token is null (never happen theoretically)
         fetch("http://localhost:8080/api/groups/join", {
@@ -173,7 +175,15 @@ export function CreateTripScreen() {
           <View style={{ height: 15 }} />
           <GreenButton label={"Créer"} link={"/user/createtrip"} onPress={createTripClk} />
           <View style={{ height: 10 }} />
+
+
         </LinearGradient>
+
+        { groupSelection ? 
+        <View style={{ flex: 1 }}>
+          <ChoiceGroup isVisible={groupSelection} onPress={() => {}} />
+        </View>
+        : <View></View> }
       </ScrollView>
   );
 }
