@@ -69,7 +69,7 @@ describe('Routes of the USERS', () => {
                         password: settings.password
                     }
                 }).end(async function(err, res) {
-                    if (err) return done(err);
+                    if (err) return done(err + " " + res.body.message);
                     return done()
                 })
 
@@ -165,12 +165,16 @@ describe('Routes of the USERS', () => {
             .expect('Content-Type', /json/)
             .expect(401)
             .end(async function(err, res) {
-                await UserModel.deleteOne({email: settings.email})
                 if (err) return done(err);
                 return done()
             })
 
         });
     });
+});
+// lance apres les tests
+after(async function() {
+    await UserModel.deleteOne({email: settings.email})
+    process.exit(0);
 });
 
