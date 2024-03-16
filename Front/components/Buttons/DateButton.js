@@ -23,14 +23,16 @@ export default function DateButton({ value, show="date", onPress }) {
         onPress={onPress}
         loadingProps={{ size: "small", color: "white" }}
         buttonStyle={{
-          height: 55
+          height: 55,
+          backgroundColor: "#2F1E45",
+          borderRadius: 0,
         }}
         titleStyle={{
           fontFamily: "Montserrat_600SemiBold",
           fontSize: 16,
         }}
         containerStyle={{
-          width: "auto",
+          width: "auto"
         }}
       />
   );

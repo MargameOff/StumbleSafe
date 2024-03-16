@@ -4,7 +4,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import ReturnButton from "../../../components/Buttons/ReturnButton";
 import DateButton from "../../../components/Buttons/DateButton";
 import GreenButton from "../../../components/Buttons/GreenButton";
 import ChoiceGroup from "../../../components/ChoiceGroup";
@@ -30,7 +29,7 @@ export function CreateTripScreen() {
   const [dateArrive, setDateArrive] = useState(new Date());
   const [timeArrive, setTimeArrive] = useState(new Date());
 
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
 
   const [groupSelection, setGroupSelection] = useState(false);
 
@@ -152,6 +151,7 @@ export function CreateTripScreen() {
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="position">
         <ScrollView contentContainerStyle={styles.container}>
           <LinearGradient colors={["#46294F", "#120721"]} style={styles.gradient}>
+              <View style={{ height: 30 }} />
 
               <Text style={styles.title}>Nouveau Trajet</Text>
               <View style={{ height: 15 }} />
@@ -159,11 +159,15 @@ export function CreateTripScreen() {
               <IconInput value={tripName} onValueUpdated={(text) => setTripName(text)} label={"Nom du trajet"} isPassword={false}/>
               <View style={{ height: 15 }} />
 
-
               <Text style={styles.text}>Séléctionner sur la map le lieu d'arrivée</Text>
 
-              <View style={{ height: 15 }} />
-              <Text style={{...styles.buttonText, ...styles.errorText}}>{errorMsg}</Text>
+              {errorMsg != "" ? 
+              <View>
+                <View style={{ height: 15 }} />
+                <Text style={{...styles.buttonText, ...styles.errorText}}>{errorMsg}</Text>
+              </View> 
+              : <View></View>}
+
               <View style={{ height: 15 }} />
 
               <MapView
@@ -191,15 +195,17 @@ export function CreateTripScreen() {
               <View style={{ height: 15 }} />
               <Text style={styles.text}>Séléctionner estimation de l'arrivée</Text>
 
-              <View style={{flex: 1, flexDirection: "row", justifyContent: "center"}}>
-                <DateButton value={dateArrive} show="date" onPress={showDatePicker} />
-                <View style={{width: 20}} />
-                <DateButton value={timeArrive} show="time" onPress={showTimePicker} />
-              </View>
+              <View style={{flex: 1}}>
+                <View style={{flexDirection: "row", justifyContent: "center"}}>
+                    <DateButton value={dateArrive} show="date" onPress={showDatePicker} />
+                    <DateButton value={timeArrive} show="time" onPress={showTimePicker} />
+                </View>
 
-              <View style={{ height: 10 }} />
-              <GreenButton label={"Créer"} link={"/user/createtrip"} onPress={selectGroups} />
-              <TransparentButton label={"Annuler"} link={"/dashboard"} />
+                <View style={{ height: 15 }} />
+
+                <GreenButton label={"Créer"} link={"/user/createtrip"} onPress={selectGroups} />
+                <TransparentButton label={"Annuler"} link={"/dashboard"} />
+              </View>
 
           </LinearGradient>
 

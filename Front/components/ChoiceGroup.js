@@ -63,17 +63,16 @@ export default function ChoiceGroup({ isVisible, onValidate, onPressClose }) {
 
   const renderGroupItems = () => {
     return groups.map((item) => {
-      const backgroundColor =
-        selectedGroupIds.includes(item.id)
-          ? "rgba(255, 255, 255, 0.3)"
-          : "rgba(255, 0, 0, 0.1)";
+      const isChecked = selectedGroupIds.includes(item.id);
 
       return (
         <GroupItem
           key={item.id}
           item={item}
           onPress={() => onSelectGroup(item)}
-          style={{ backgroundColor }}
+          style={{ backgroundColor: (isChecked ? "#00000050" : "#0000002E") }}
+          checkable={true}
+          isChecked={isChecked}
         />
       );
     });
@@ -93,7 +92,8 @@ export default function ChoiceGroup({ isVisible, onValidate, onPressClose }) {
 
           <View style={{
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            marginBottom: 15
             }}>
               <TitleText title={"Mes Groupes"} />
 

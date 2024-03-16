@@ -32,7 +32,8 @@ export default function BottomBar() {
                 <TouchableOpacity onPress={() => router.push("dashboard")}>
                     <Ionicons name="home-outline" size={32} color="white" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate("user/createtrip")}>
+
+                <TouchableOpacity style={{backgroundColor: "red", }} onPressOut={() => navigation.navigate("user/createtrip")}>
                     <View style={styles.subButton}/>
                     <Ionicons name="add-circle" style={styles.button} size={90} color="#50E3A5" />
                 </TouchableOpacity>

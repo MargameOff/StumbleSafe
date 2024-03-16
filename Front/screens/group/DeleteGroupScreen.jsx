@@ -31,7 +31,7 @@ export function DeleteGroupScreen() {
   const deleteGroup = async () => {
     getJwtToken((token) => {
       if(token != null) {
-        fetch("http://localhost:8080/api/groups/delete", {
+        fetch("http://localhost.24:8080/api/groups/delete", {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
