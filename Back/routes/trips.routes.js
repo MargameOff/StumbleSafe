@@ -530,11 +530,11 @@ router.patch('/cancel', checkIfUserIsConnected, jsonParser, cancelTrip);
  *                 description: Les identifiants uniques des groupes associés au trajet.
     * responses:
     *  '200':
-    *  description: Succès de la requête. Retourne les trajets de l'utilisateur.
+    *       description: Succès de la requête. Retourne les trajets de l'utilisateur.
     * '401':
-    * description: Non autorisé. L'utilisateur n'est pas connecté.
+    *       description: Non autorisé. L'utilisateur n'est pas connecté.
     * '500':
-    * description: Erreur serveur. Impossible de récupérer les trajets de l'utilisateur.
+    *       description: Erreur serveur. Impossible de récupérer les trajets de l'utilisateur.
     */
 router.get('/getTrips', checkIfUserIsConnected, jsonParser, getTrips);
 

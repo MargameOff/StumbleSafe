@@ -437,26 +437,26 @@ router.get('/:groupId/members', checkIfUserIsConnected, jsonParser, get_members)
 /**
  * @swagger
  * /api/groups/{groupId}/getTrips:
- *  get:
- *   summary: Récupérer les trajets du groupe
- *  tags:
- *   - Trajets
- * security:
- *  - bearerAuth: []
- *      parameters:
- *       - in: path
- *         name: groupId
- *         schema:
- *           type: integer
- *         required: true
- *         description: Identifiant du groupe dont on veut récupérer la liste des trajets
+ * get:
+     * summary: Récupérer les trajets du groupe
+     * tags:
+        * - Groups
+     * security:
+        * - bearerAuth: []
+     * parameters:
+         * - in: path
+             * name: groupId
+             * schema:
+                * type: integer
+             * required: true
+             * description: Identifiant du groupe dont on veut récupérer la liste des trajets
  * responses:
- *  '200':
- *  description: Succès de la requête. Retourne les trajets du groupe.
- * '401':
- * description: Non autorisé. L'utilisateur n'est pas connecté.
- * '500':
- * description: Erreur serveur. Impossible de récupérer les trajets du groupe.
+ *      '200':
+ *          description: Succès de la requête. Retourne les trajets du groupe.
+ *      '401':
+ *          description: Non autorisé. L'utilisateur n'est pas connecté.
+ *      '500':
+ *          description: Erreur serveur. Impossible de récupérer les trajets du groupe.
  */
 router.get('/:groupId/trips', checkIfUserIsConnected, jsonParser, getTripsOfSingleGroup);
 
