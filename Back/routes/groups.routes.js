@@ -1,6 +1,14 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import {create, join, get, update_group, quit, delete_group} from '../controllers/users/group.controllers.js';
+import {
+    create,
+    join,
+    get,
+    update_group,
+    quit,
+    delete_group,
+    get_members, getTripsOfSingleGroup
+} from '../controllers/users/group.controllers.js';
 import checkIfUserIsConnected from '../controllers/middlewares/auth.middleware.js';
 
 const router = express.Router();
@@ -383,4 +391,73 @@ router.patch('/group-info', checkIfUserIsConnected, jsonParser, update_group);
  *         description: Erreur serveur. Impossible de supprimer le groupe.
  */
 router.delete('/delete', checkIfUserIsConnected, jsonParser, delete_group);
+
+/**
+ * @swagger
+ * /api/groups/{groupId}/members:
+ *   get:
+ *     summary: Récupère les membres d'un groupe via son identifiant. L'utilisateur doit être membre de ce groupe.
+ *     tags:
+ *       - Groups
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: groupId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Identifiant du groupe dont on veut récupérer la liste des membres
+ *     responses:
+ *       '200':
+ *         description: La liste des membres appartenant au groupe donné
+ *         content:
+ *           application/json:
+ *             schema:
+*                   type: array
+*                   items:
+*                     type: object
+*                     properties:
+*                       _id:
+*                         type: string
+*                         description: L'identifiant unique du membre du groupe.
+*                       nom_affiche:
+*                         type: string
+*                         description: Le nom affiché du membre.
+*                       proprietaire:
+*                         type: boolean
+*                         description: Indique si le membre est propriétaire du groupe.
+ *       '404':
+ *         description: Vous n'appartenez pas à ce groupe.
+ *       '500':
+ *         description: Erreur serveur. Impossible de mettre à jour les informations du groupe.
+ */
+router.get('/:groupId/members', checkIfUserIsConnected, jsonParser, get_members);
+
+/**
+ * @swagger
+ * /api/groups/{groupId}/getTrips:
+ *  get:
+ *   summary: Récupérer les trajets du groupe
+ *  tags:
+ *   - Trajets
+ * security:
+ *  - bearerAuth: []
+ *      parameters:
+ *       - in: path
+ *         name: groupId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: Identifiant du groupe dont on veut récupérer la liste des trajets
+ * responses:
+ *  '200':
+ *  description: Succès de la requête. Retourne les trajets du groupe.
+ * '401':
+ * description: Non autorisé. L'utilisateur n'est pas connecté.
+ * '500':
+ * description: Erreur serveur. Impossible de récupérer les trajets du groupe.
+ */
+router.get('/:groupId/trips', checkIfUserIsConnected, jsonParser, getTripsOfSingleGroup);
+
 export default router;

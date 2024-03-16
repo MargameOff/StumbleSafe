@@ -1,5 +1,8 @@
 import GroupModel from '../../models/group.models.js';
 import UserModel from "../../models/user.models.js";
+import {ObjectId} from "bson";
+import RequestParsingError from "../../tools/error.js";
+import TripModel from "../../models/trip.models.js";
 
 /**
  * 
@@ -308,6 +311,84 @@ const quit = async (req, res) => {
     }
 }
 
+/**
+ * Request param : ObjectID
+ * Request body : None
+ * Response body :
+ * [
+ *      "_id": ObjetID,
+ *      "nom_affiche": String,
+ *      "proprietaire": Boolean
+ * ]
+ */
+const get_members = async (req, res) => {
+    try  {
+        const userId = req.user.id;
+        const { groupId } = req.params;
+
+        if (!groupId) {
+            return res.status(400).json({ message: 'L\'id du groupe est manquant.' });
+        }
+
+        if (!ObjectId.isValid(groupId)) {
+            return res.status(400).json({ message: `L'id de groupe ${groupId} ne correspond pas au format ObjectID attendu.` });
+        }
+
+        // On récupère le groupe
+        const members = await getGroupByIdForUser(userId, groupId);
+        if (!members) {
+            return res.status(404).json({ message: 'Vous n\'appartenez pas à ce groupe' });
+        }
+
+        const response = [];
+        for (let membre of members) {
+            const membreInfo = await UserModel.findById(membre._id);
+            if (!membreInfo) {
+                res.status(404).json({ message: `Impossible de trouver l'utilisateur d'ID ${group._id} appartenant au groupe d'ID ${membre._id}.` });
+            }
+            response.push({ _id: membre._id, nom_affiche: membreInfo.nom_affiche, proprietaire: membre.proprietaire })
+        }
+
+        res.status(200).json(response);
+
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération du groupes de l\'utilisateur. L\'identifiant fourni ne correspond pas a un groupe où l\'utilisateur appartient', error: error.message });
+    }
+}
+
+const getTripsOfSingleGroup = async (req, res) => {
+    try {
+        const { groupId } = req.params;
+        if (!groupId) {
+            return res.status(400).json({message: "Le paramètre groupId est obligatoire."});
+        }
+        const trips = await TripModel.find({groupes: groupId, statut: "en cours"});
+        const extendedTrips = [];
+        for (let trip of trips) {
+            const user = await UserModel.findById(trip.utilisateur);
+            if (!user) {
+                res.status(404).json({ message: `Impossible de trouver l'utilisateur d'ID ${user._id}.` });
+            }
+            extendedTrips.push({
+                _id: trip._id,
+                nom: trip.nom,
+                statut: trip.statut,
+                utilisateur: trip.utilisateur,
+                nom_utilisateur: user.nom_affiche,
+                groupes: trip.groupe,
+                depart: trip.depart,
+                arrivee: trip.arrivee,
+                date_depart: trip.date_depart,
+                date_arrivee_estimee: trip.date_arrivee_estimee
+            });
+        }
+        res.status(200).json(extendedTrips);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération des trajets', error: error.message });
+    }
+
+};
+
 
 /**
  * Check if code is not already existed
@@ -397,6 +478,28 @@ const getGroupByCodeForUser = async (userId, code) => {
     }
 }
 
+/**
+ * Retrive members corresponding to groupId where userId is a member
+ * @param userId
+ * @param groupId
+ * @returns list of group members
+ */
+const getGroupByIdForUser = async (userId, groupId) => {
+    try {
+        const group = await GroupModel.findOne(
+            {
+                _id: groupId,
+                membres: {
+                    $elemMatch: {
+                        _id: userId
+                    }
+                }
+            });
+        return !!group ? group.membres : null;
+    } catch (error) {
+        throw new Error('Erreur lors de la recherche du groupe par code pour l\'utilisateur: ' + error.message);
+    }
+}
 
 export {
     create,
@@ -405,4 +508,6 @@ export {
     update_group,
     quit,
     delete_group,
+    get_members,
+    getTripsOfSingleGroup,
 }

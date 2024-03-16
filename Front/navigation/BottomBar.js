@@ -20,8 +20,9 @@ export default function BottomBar() {
     return (
         <View>
             <ChoicePicker 
-            isVisible={isModalVisible} 
-            onClose={() => setIsModalVisible(false)}>
+            isVisible={isModalVisible}
+            onClose={() => setIsModalVisible(false)}
+            onPress={() => setIsModalVisible(false)}>
             </ChoicePicker>
             <LinearGradient
                 colors={["rgba(65,37,73,1)", "rgba(65,37,73,0.29)"]}
@@ -36,7 +37,7 @@ export default function BottomBar() {
                     <Ionicons name="add-circle" style={styles.button} size={90} color="#50E3A5" />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => setIsModalVisible(!isModalVisible)}>
+                <TouchableOpacity onPress={() => setIsModalVisible(true)}>
                     <Ionicons name="people" size={32} color="white" />
                 </TouchableOpacity>
             </LinearGradient>
