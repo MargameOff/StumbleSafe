@@ -14,7 +14,7 @@ export default function MemberList({ size, groupId }) {
     const getMembers = async () => {
         getJwtToken((token) => {
             if(token != null) {
-                fetch(`http://localhost.24:8080/api/groups/${groupId}/members`, {
+                fetch(`http://stumblesafe.mariusdeleuil.fr:8090/api/groups/${groupId}/members`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

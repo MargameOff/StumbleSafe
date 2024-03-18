@@ -12,7 +12,7 @@ export default function TripList({ size, groupId=null }) {
 
     const fetchTrips = async (token) => {
         if (!groupId) {
-            return fetch("http://localhost.24:8080/api/trips/getTrips", {
+            return fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/trips/getTrips", {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -20,7 +20,7 @@ export default function TripList({ size, groupId=null }) {
                 }
             });
         } else {
-            return fetch(`http://localhost.24:8080/api/groups/${groupId}/trips`, {
+            return fetch(`http://stumblesafe.mariusdeleuil.fr:8090/api/groups/${groupId}/trips`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -33,7 +33,7 @@ export default function TripList({ size, groupId=null }) {
     const getTrips = async () => {
         getJwtToken((token) => {
             if(token != null) {
-                fetch("http://localhost.24:8080/api/users/profile", {
+                fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/users/profile", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

@@ -19,7 +19,7 @@ export function LoginScreen() {
 
   async function loginClk(event) {
 
-    fetch("http://localhost.24:8080/api/users/login", {
+    fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
