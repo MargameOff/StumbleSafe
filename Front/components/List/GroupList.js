@@ -12,7 +12,7 @@ export default function GroupList({ size }) {
     const getGroups = async () => {
         getJwtToken((token) => {
             if(token != null) {
-                fetch("http://localhost:8080/api/users/profile", {
+                fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/users/profile", {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -25,7 +25,7 @@ export default function GroupList({ size }) {
                     }
                     return Promise.reject(data);
                 }).then( currentUserId =>
-                    fetch("http://localhost:8080/api/groups/", {
+                    fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/groups/", {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",

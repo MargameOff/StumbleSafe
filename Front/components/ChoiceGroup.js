@@ -22,7 +22,7 @@ export default function ChoiceGroup({ isVisible, onValidate, onPressClose }) {
   const getGroups = async () => {
     getJwtToken((token) => {
       if(token != null) {
-        fetch("http://localhost:8080/api/groups/", {
+        fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/groups/", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

@@ -26,7 +26,7 @@ export function GroupeCreatingScreen() {
 
     getJwtToken((token) => { 
       if(token != null) { // if token is null (never happen theoretically)
-        fetch("http://localhost:8080/api/groups/create", {
+        fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/groups/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

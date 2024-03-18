@@ -14,7 +14,7 @@ export function LoadingScreen() {
     let [fontsLoaded] = useFonts({ Montserrat_700Bold, Montserrat_600SemiBold });
 
     getJwtToken((token) => {
-      fetch("http://localhost:8080/api/users/login/refresh", {
+      fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/users/login/refresh", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

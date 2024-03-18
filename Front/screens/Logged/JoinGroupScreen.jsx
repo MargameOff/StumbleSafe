@@ -24,7 +24,7 @@ export function JoinGroupScreen() {
 
     getJwtToken((token) => { 
       if(token != null) { // if token is null (never happen theoretically)
-        fetch("http://localhost:8080/api/groups/join", {
+        fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/groups/join", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

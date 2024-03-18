@@ -27,7 +27,7 @@ export function ModificationGroupScreen() {
     const updateGroup = async () => {
         getJwtToken((token) => {
             if(token != null) {
-                fetch("http://localhost:8080/api/groups/group-info", {
+                fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/groups/group-info", {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",

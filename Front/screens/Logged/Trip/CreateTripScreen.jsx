@@ -73,7 +73,7 @@ export function CreateTripScreen() {
           location = await Location.getCurrentPositionAsync({});
           let estimatedArrive = new Date(dateArrive.getFullYear(), dateArrive.getMonth(), dateArrive.getDate(), timeArrive.getHours(), timeArrive.getMinutes()); 
 
-          fetch("http://localhost:8080/api/trips/create", {
+          fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/trips/create", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

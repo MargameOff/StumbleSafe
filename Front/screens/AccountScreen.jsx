@@ -17,7 +17,7 @@ import DisableInput from "../components/DisableInput";
 import ParagraphText from "../components/ParagraphText";
 
 async function getProfile(token) {
-    const url = "http://localhost:8080/api/users/profile";
+    const url = "http://stumblesafe.mariusdeleuil.fr:8090/api/users/profile";
 
     try {
         const response = await fetch(url, {
@@ -50,7 +50,7 @@ export function AccountScreen() {
         getJwtToken((token) => {
             console.log("Token : "+token)
 
-            const url = "http://localhost:8080/api/users/profile";
+            const url = "http://stumblesafe.mariusdeleuil.fr:8090/api/users/profile";
 
             getProfile(token)
                 .then(data => {
@@ -77,7 +77,7 @@ export function AccountScreen() {
 
                 if (displayName) {
                     console.log("Requete de changement de nom affiché demandé : " + displayName)
-                    updateRequests.push(fetch("http://localhost:8080/api/users/update/name", {
+                    updateRequests.push(fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/users/update/name", {
                         method: "PATCH",
                         headers: {
                             "Content-Type": "application/json",
@@ -91,7 +91,7 @@ export function AccountScreen() {
 
                 if (newPassword) {
                     console.log("Requete de changement de mot de passe demandé : oldPwd : " + oldPassword + " et newPwd : " + newPassword)
-                    updateRequests.push(fetch("http://localhost:8080/api/users/update/password", {
+                    updateRequests.push(fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/users/update/password", {
                         method: "PATCH",
                         headers: {
                             "Content-Type": "application/json",

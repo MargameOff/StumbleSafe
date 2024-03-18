@@ -31,7 +31,7 @@ export function RegisterScreen() {
 
         if (username && email && displayName && password && confirmPassword) {
             if (password === confirmPassword) {
-                fetch("http://localhost:8080/api/users/signup", {
+                fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/users/signup", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

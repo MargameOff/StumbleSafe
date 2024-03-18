@@ -47,6 +47,6 @@ You can modify the .env file to change the database configuration.
 
 Pour avoir accès a la documentation de l'API (Swagger)  
 
-```http://localhost:8080/api-docs/```  
+```http://stumblesafe.mariusdeleuil.fr:8090/api-docs/```  
 
 Il faut bien penser à lancer le serveur de Back

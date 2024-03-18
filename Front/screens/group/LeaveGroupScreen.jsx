@@ -31,7 +31,7 @@ export function LeaveGroupScreen() {
   const leaveGroup = async () => {
     getJwtToken((token) => {
       if(token != null) {
-        fetch("http://localhost:8080/api/groups/quit", {
+        fetch("http://stumblesafe.mariusdeleuil.fr:8090/api/groups/quit", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
